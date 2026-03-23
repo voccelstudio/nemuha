@@ -8,6 +8,9 @@ const CACHE_STATIC = 'nemuha-static-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
+  './jscore.js',
+  './jsdatabase.js',
+  './jsui.js',
   './manifest.json',
   'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap',
   'https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js'
