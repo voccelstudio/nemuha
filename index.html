@@ -301,7 +301,7 @@
 <base target="_blank">
 </head>
 <body>
-<div class="app">
+<div class="app" style="display:none">
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
         <div class="logo">
@@ -333,6 +333,10 @@
         <div class="nav-section">
             <div class="nav-section-title">Sistema</div>
             <div class="nav-item" data-sec="config" onclick="App.show('config')"><span class="nav-icon">⚙️</span>Configuración</div>
+        </div>
+        <div class="nav-section" style="margin-top:auto;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.07)">
+            <div style="padding:0 0.5rem 0.5rem;font-size:0.75rem;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="nav-user-email"></div>
+            <div class="nav-item" onclick="Auth.logout()" style="color:var(--danger)"><span class="nav-icon">🚪</span>Cerrar Sesión</div>
         </div>
     </aside>
     <div class="overlay" id="overlay" onclick="App.closeSidebar()"></div>
@@ -1477,17 +1481,13 @@
     </div>
     <div style="margin-bottom:1rem">
       <label style="display:block;font-size:.78rem;font-weight:700;color:var(--text-secondary);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.05em">Contraseña</label>
-      <input type="password" id="erpPass" placeholder="••••••" autocomplete="current-password"
+      <input type="password" id="erpPass" placeholder="••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')Auth.login()"
         style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-body);color:var(--text-primary);font-size:.95rem;outline:none;box-sizing:border-box">
     </div>
-    <button id="erpLoginBtn" style="width:100%;padding:.85rem;background:var(--primary-gradient);border:none;border-radius:var(--radius-sm);color:white;font-size:1rem;font-weight:800;cursor:pointer;margin-top:.5rem">
+    <button id="erpLoginBtn" onclick="Auth.login()" style="width:100%;padding:.85rem;background:var(--primary-gradient);border:none;border-radius:var(--radius-sm);color:white;font-size:1rem;font-weight:800;cursor:pointer;margin-top:.5rem">
       🔓 Ingresar
     </button>
-    <div style="text-align:center;margin-top:1rem">
-      <button id="erpLoadUsers" style="background:none;border:none;color:var(--primary);cursor:pointer;font-size:.75rem;text-decoration:underline">
-        📂 Cargar erp_usuarios.json
-      </button>
-    </div>
+
   </div>
 </div>
 
@@ -1497,6 +1497,7 @@
 
 <!-- ══ Módulos de la aplicación ══ -->
 <script src="jsdatabase.js"></script>
+<script src="jsauth.js"></script>
 <script src="jscore.js"></script>
 <script src="jsui.js"></script>
 <script src="jsinventario.js"></script>
@@ -1505,9 +1506,9 @@
 
 <!-- ══ Arranque ══ -->
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     DB.init();
-    App.init();
+    await Auth.init();
 });
 </script>
 </body>
