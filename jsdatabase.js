@@ -3,8 +3,8 @@
 // IndexedDB + localStorage + Supabase sync
 // ════════════════════════════════════════
 
-const SUPA_URL = 'https://byxumspjzvlybzypzilm.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5eHVtc3BqenZseWJ6eXB6aWxtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMzUzMzAsImV4cCI6MjA4ODgxMTMzMH0.KngM-uNhil5sI_3pGFvLXO-viQKmFY6Km2R78PXR7bg';
+const SUPA_URL = 'https://tbtnggplcygzmwrstirj.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRidG5nZ3BsY3lnem13cnN0aXJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNTg2MzEsImV4cCI6MjA4OTgzNDYzMX0.STadIs9jHkYAMhaoG7BnBEVEDUfjhA4QYgLgibr3rzg';
 let _supaClient = null;
 
 function getSupa() {
