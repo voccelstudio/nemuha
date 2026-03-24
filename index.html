@@ -1503,12 +1503,14 @@
 <script src="jsinventario.js"></script>
 <script src="jsventas.js"></script>
 <script src="jsnomina.js"></script>
+<script src="jsnotificaciones.js"></script>
 
 <!-- ══ Arranque ══ -->
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
     DB.init();
     await Auth.init();
+    // Notificaciones se inician desde App.init() → App.show(dashboard)
 });
 </script>
 </body>

@@ -116,6 +116,11 @@ const App = {
             }
         }, 300000);
 
+        // Notificaciones in-app
+        if (typeof Notificaciones !== 'undefined') {
+            Notificaciones.init();
+        }
+
         // Registrar SW
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');
