@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ñemuha — Paraguay</title>
+    <!-- PWA -->
+    <meta name="theme-color" content="#6366f1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Ñemuha">
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary:#6366f1;--primary-light:#818cf8;--primary-dark:#4f46e5;
+            --primary-gradient:linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%);
+            --success:#10b981;--success-light:#34d399;
+            --warning:#f59e0b;--warning-light:#fbbf24;
+            --danger:#ef4444;--danger-light:#f87171;
+            --info:#0ea5e9;
+            --bg-body:#f0f4f8;--bg-card:rgba(255,255,255,0.92);
+            --bg-sidebar:rgba(15,23,42,0.97);--bg-hover:rgba(99,102,241,0.08);
+            --text-primary:#1e293b;--text-secondary:#64748b;
+            --text-sidebar:#f1f5f9;--text-muted:#94a3b8;
+            --border:rgba(226,232,240,0.7);
+            --shadow:0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg:0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-glow:0 0 20px rgba(99,102,241,0.3);
+            --radius:16px;--radius-sm:8px;--radius-lg:24px;
+            --transition:200ms ease;--sidebar-w:270px;
+        }
+        [data-theme="dark"] {
+            --bg-body:#0f172a;--bg-card:rgba(30,41,59,0.93);
+            --bg-sidebar:rgba(2,6,23,0.98);--bg-hover:rgba(99,102,241,0.15);
+            --text-primary:#f8fafc;--text-secondary:#94a3b8;--text-muted:#64748b;
+            --border:rgba(51,65,85,0.6);--shadow:0 4px 6px -1px rgba(0,0,0,0.35);
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:var(--bg-body);color:var(--text-primary);line-height:1.6;transition:background var(--transition),color var(--transition);}
+        .app{display:flex;min-height:100vh;}
+
+        /* ── Sidebar ── */
+        .sidebar{background:var(--bg-sidebar);backdrop-filter:blur(24px);color:var(--text-sidebar);padding:1.5rem 1rem;position:fixed;height:100vh;width:var(--sidebar-w);overflow-y:auto;z-index:200;border-right:1px solid rgba(255,255,255,0.06);transition:transform var(--transition);}
+        .logo{display:flex;align-items:center;gap:10px;margin-bottom:2rem;padding:0 0.5rem;}
+        .logo-icon{font-size:1.6rem;filter:drop-shadow(0 0 10px rgba(99,102,241,0.6));}
+        .logo-text{font-size:1.35rem;font-weight:800;background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .nav-section{margin-bottom:1.5rem;}
+        .nav-section-title{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);margin-bottom:0.6rem;padding-left:0.875rem;font-weight:700;}
+        .nav-item{display:flex;align-items:center;gap:11px;padding:0.8rem 0.875rem;border-radius:var(--radius-sm);cursor:pointer;margin-bottom:0.25rem;transition:all 150ms ease;font-size:0.9rem;font-weight:500;position:relative;}
+        .nav-item::before{content:'';position:absolute;left:0;top:0;height:100%;width:3px;background:var(--primary-gradient);transform:scaleY(0);transition:transform 150ms ease;border-radius:0 2px 2px 0;}
+        .nav-item:hover{background:var(--bg-hover);transform:translateX(3px);}
+        .nav-item.active{background:var(--bg-hover);color:var(--primary-light);}
+        .nav-item.active::before{transform:scaleY(1);}
+        .nav-icon{font-size:1.1rem;min-width:32px;width:32px;text-align:center;flex-shrink:0;}
+        .nav-badge{margin-left:auto;background:var(--primary-gradient);padding:0.2rem 0.55rem;border-radius:20px;font-size:0.72rem;font-weight:700;animation:pulse 2.5s infinite;}
+
+        /* ── Main ── */
+        .main{margin-left:var(--sidebar-w);padding:1.75rem 2rem;flex:1;min-height:100vh;}
+
+        /* ── Header ── */
+        .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem;padding:1.1rem 1.5rem;background:var(--bg-card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);backdrop-filter:blur(10px);flex-wrap:wrap;gap:0.75rem;position:relative;overflow:visible;z-index:100;}
+        .header h1{font-size:1.5rem;font-weight:800;}
+        .breadcrumb{color:var(--text-secondary);font-size:0.8rem;margin-top:0.2rem;}
+        .header-actions{display:flex;gap:0.625rem;align-items:center;flex-wrap:wrap;}
+
+        /* ── Currency ── */
+        .currency-selector{display:inline-flex;background:var(--bg-body);border-radius:var(--radius-sm);padding:0.2rem;border:1px solid var(--border);}
+        .currency-option{padding:0.4rem 0.875rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.8rem;transition:all 150ms;border:none;background:transparent;color:var(--text-secondary);font-family:inherit;}
+        .currency-option.active{background:var(--primary);color:white;}
+        /* theme-toggle defined below */
+
+        /* ── Stats ── */
+        .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.25rem;margin-bottom:1.75rem;}
+        .stat-card{background:var(--bg-card);padding:1.5rem;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);position:relative;overflow:hidden;transition:all var(--transition);backdrop-filter:blur(10px);}
+        .stat-card::after{content:'';position:absolute;top:0;right:0;width:90px;height:90px;background:var(--primary-gradient);opacity:0.08;border-radius:50%;transform:translate(30%,-30%);transition:all var(--transition);}
+        .stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);}
+        .stat-card.success::after{background:linear-gradient(135deg,var(--success),var(--success-light));}
+        .stat-card.warning::after{background:linear-gradient(135deg,var(--warning),var(--warning-light));}
+        .stat-card.danger::after{background:linear-gradient(135deg,var(--danger),var(--danger-light));}
+        .stat-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.625rem;}
+        .stat-icon{font-size:1.35rem;padding:0.625rem;border-radius:var(--radius-sm);background:var(--bg-body);}
+        .stat-trend{font-size:0.72rem;font-weight:700;padding:0.2rem 0.5rem;border-radius:20px;background:rgba(16,185,129,0.1);color:var(--success);}
+        .stat-value{font-size:1.85rem;font-weight:800;background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.02em;margin-bottom:0.2rem;}
+        .stat-card.success .stat-value{background:linear-gradient(135deg,var(--success),var(--success-light));-webkit-background-clip:text;}
+        .stat-card.warning .stat-value{background:linear-gradient(135deg,var(--warning),var(--warning-light));-webkit-background-clip:text;}
+        .stat-card.danger .stat-value{background:linear-gradient(135deg,var(--danger),var(--danger-light));-webkit-background-clip:text;}
+        .stat-label{color:var(--text-secondary);font-size:0.8rem;font-weight:500;}
+
+        /* ── Cards ── */
+        .card{background:var(--bg-card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:1.5rem;overflow:hidden;backdrop-filter:blur(10px);}
+        .card-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(to right,transparent,rgba(99,102,241,0.025));flex-wrap:wrap;gap:0.5rem;}
+        .card-title{font-size:1rem;font-weight:700;display:flex;align-items:center;gap:0.5rem;}
+        .card-body{padding:1.5rem;}
+
+        /* ── Tables ── */
+        .table-wrap{overflow-x:auto;}
+        table{width:100%;border-collapse:separate;border-spacing:0;}
+        th{padding:0.875rem 1rem;text-align:left;font-weight:700;color:var(--text-secondary);text-transform:uppercase;font-size:0.67rem;letter-spacing:0.07em;background:var(--bg-body);border-bottom:2px solid var(--border);}
+        td{padding:0.875rem 1rem;text-align:left;border-bottom:1px solid var(--border);font-size:0.875rem;}
+        tr:last-child td{border-bottom:none;}
+        tr:hover td{background:var(--bg-hover);}
+
+        /* ── Badges ── */
+        .badge{display:inline-flex;align-items:center;gap:0.3rem;padding:0.3rem 0.75rem;border-radius:20px;font-size:0.72rem;font-weight:700;border:1px solid transparent;}
+        .badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;}
+        .badge-success{background:rgba(16,185,129,0.1);color:var(--success);border-color:rgba(16,185,129,0.2);}
+        .badge-warning{background:rgba(245,158,11,0.1);color:var(--warning);border-color:rgba(245,158,11,0.2);}
+        .badge-danger{background:rgba(239,68,68,0.1);color:var(--danger);border-color:rgba(239,68,68,0.2);}
+        .badge-info{background:rgba(99,102,241,0.1);color:var(--primary);border-color:rgba(99,102,241,0.2);}
+
+        /* ── Buttons ── */
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:0.45rem;padding:0.7rem 1.375rem;border-radius:var(--radius-sm);border:none;cursor:pointer;font-weight:600;font-size:0.875rem;transition:all 150ms;position:relative;overflow:hidden;font-family:inherit;white-space:nowrap;}
+        .btn:active{transform:scale(0.97)!important;}
+        .btn-primary{background:var(--primary-gradient);color:white;box-shadow:0 4px 6px -1px rgba(99,102,241,0.3);}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:var(--shadow-glow);}
+        .btn-success{background:linear-gradient(135deg,var(--success),var(--success-light));color:white;box-shadow:0 4px 6px -1px rgba(16,185,129,0.3);}
+        .btn-success:hover{transform:translateY(-2px);}
+        .btn-danger{background:linear-gradient(135deg,var(--danger),var(--danger-light));color:white;box-shadow:0 4px 6px -1px rgba(239,68,68,0.3);}
+        .btn-danger:hover{transform:translateY(-2px);}
+        .btn-warning{background:linear-gradient(135deg,var(--warning),var(--warning-light));color:white;}
+        .btn-warning:hover{transform:translateY(-2px);}
+        .btn-secondary{background:var(--bg-body);border:1px solid var(--border);color:var(--text-primary);}
+        .btn-secondary:hover{background:var(--bg-hover);border-color:var(--primary);}
+        .btn-sm{padding:0.45rem 0.875rem;font-size:0.8rem;}
+        .btn-lg{padding:0.875rem 1.75rem;font-size:0.95rem;}
+
+        /* ── Forms ── */
+        .form-group{margin-bottom:1.1rem;}
+        .form-label{display:block;margin-bottom:0.4rem;font-size:0.85rem;font-weight:600;}
+        .form-input,.form-select{width:100%;padding:0.8rem 1rem;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;background:var(--bg-body);color:var(--text-primary);transition:all 150ms;}
+        .form-input:hover,.form-select:hover{border-color:var(--primary-light);}
+        .form-input:focus,.form-select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,102,241,0.12);background:var(--bg-card);}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;}
+        .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.1rem;}
+        .form-row-4{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:0.875rem;align-items:end;}
+        .input-group{position:relative;}
+        .input-icon{position:absolute;left:0.875rem;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:1rem;pointer-events:none;}
+        .input-group .form-input{padding-left:2.75rem;}
+
+        /* ── Modals ── */
+        .modal{position:fixed;inset:0;background:rgba(15,23,42,0.65);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;z-index:1000;padding:1rem;}
+        .modal.active{display:flex;}
+        .modal-content{background:var(--bg-card);border-radius:var(--radius-lg);width:100%;max-width:860px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 25px 50px -12px rgba(0,0,0,0.3);border:1px solid var(--border);animation:modalIn 0.2s ease;}
+        @keyframes modalIn{from{opacity:0;transform:scale(0.95) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+        .modal-header{padding:1.375rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+        .modal-header h3{font-size:1.1rem;font-weight:700;}
+        .modal-footer{padding:1.25rem 1.5rem;border-top:1px solid var(--border);justify-content:flex-end;gap:0.75rem;display:flex;background:var(--bg-body);}
+        .modal-body{padding:1.5rem;overflow-y:auto;flex:1;}
+
+        /* ── Totals ── */
+        .totals-box{background:linear-gradient(135deg,var(--bg-body),rgba(99,102,241,0.04));border-radius:var(--radius);padding:1.375rem;border:2px solid var(--border);margin-top:1rem;}
+        .total-line{display:flex;justify-content:space-between;margin-bottom:0.625rem;font-size:0.9rem;}
+        .total-line.grand{font-size:1.4rem;font-weight:800;color:var(--primary);border-top:2px solid var(--border);padding-top:0.75rem;margin-top:0.75rem;margin-bottom:0;}
+
+        /* ── Charts (custom SVG) ── */
+        .chart-container{position:relative;width:100%;}
+        .bar-chart{display:flex;align-items:flex-end;gap:6px;height:200px;padding:0 4px;}
+        .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;}
+        .bar{width:100%;border-radius:6px 6px 0 0;transition:height 0.6s cubic-bezier(.34,1.56,.64,1),opacity 0.3s;cursor:pointer;position:relative;}
+        .bar:hover{opacity:0.85;filter:brightness(1.1);}
+        .bar-val{font-size:0.62rem;color:var(--text-muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;}
+        .bar-lbl{font-size:0.62rem;color:var(--text-muted);transform:rotate(-30deg);white-space:nowrap;transform-origin:center;margin-top:2px;}
+
+        /* Donut chart */
+        .donut-wrap{display:flex;align-items:center;gap:2rem;flex-wrap:wrap;}
+        .donut-legend{display:flex;flex-direction:column;gap:0.625rem;flex:1;min-width:160px;}
+        .donut-item{display:flex;align-items:center;gap:0.625rem;font-size:0.82rem;}
+        .donut-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+
+        /* Line chart */
+        .line-chart-wrap{width:100%;overflow:hidden;}
+        svg.line-chart{width:100%;height:220px;display:block;}
+
+        /* ── Reportes tabs ── */
+        .report-tabs{display:flex;gap:0.5rem;margin-bottom:1.5rem;background:var(--bg-card);padding:0.4rem;border-radius:var(--radius);border:1px solid var(--border);}
+        .report-tab{flex:1;padding:0.6rem 1rem;border-radius:var(--radius-sm);border:none;background:transparent;cursor:pointer;font-weight:600;font-size:0.85rem;font-family:inherit;color:var(--text-secondary);transition:all 150ms;text-align:center;}
+        .report-tab.active{background:var(--primary-gradient);color:white;box-shadow:0 2px 8px rgba(99,102,241,0.3);}
+        .report-panel{display:none;}
+        .report-panel.active{display:block;}
+
+        /* ── KPI row ── */
+        .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem;}
+        .kpi{background:var(--bg-body);border-radius:var(--radius-sm);padding:1rem 1.25rem;border:1px solid var(--border);text-align:center;}
+        .kpi-val{font-size:1.4rem;font-weight:800;background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .kpi-lbl{font-size:0.75rem;color:var(--text-muted);margin-top:0.2rem;}
+
+        .badge-purple{background:rgba(139,92,246,0.1);color:#8b5cf6;border-color:rgba(139,92,246,0.2);}
+        /* ── Pagos proveedores ── */
+        .deuda-card{background:linear-gradient(135deg,rgba(239,68,68,0.05),rgba(239,68,68,0.02));border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius);padding:1.25rem;margin-bottom:0.75rem;transition:all var(--transition);}
+        .deuda-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+        .deuda-card.pagada{background:linear-gradient(135deg,rgba(16,185,129,0.05),rgba(16,185,129,0.02));border-color:rgba(16,185,129,0.2);}
+        .deuda-card.parcial{background:linear-gradient(135deg,rgba(245,158,11,0.05),rgba(245,158,11,0.02));border-color:rgba(245,158,11,0.2);}
+        .progress-bar{background:var(--border);border-radius:4px;height:6px;overflow:hidden;margin-top:0.5rem;}
+        .progress-fill{height:100%;border-radius:4px;transition:width 0.6s ease;}
+        .warehouse-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:340px;background:var(--bg-body);border-radius:var(--radius);border:2px dashed var(--border);gap:1rem;color:var(--text-muted);}
+        .warehouse-placeholder .big-icon{font-size:4rem;opacity:0.3;}
+
+        /* ── Empty ── */
+        .empty-state{text-align:center;padding:2.5rem;color:var(--text-muted);}
+        .empty-state-icon{font-size:2.5rem;margin-bottom:0.75rem;opacity:0.5;}
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar{width:6px;height:6px;}
+        ::-webkit-scrollbar-track{background:var(--bg-body);}
+        ::-webkit-scrollbar-thumb{background:var(--primary-light);border-radius:4px;}
+
+        /* ── Animations ── */
+        @keyframes slideIn{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+        .animate-in{animation:slideIn 0.35s ease-out;}
+        @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.65;}}
+
+        /* ── Utils ── */
+        .hidden{display:none!important;}
+        .flex{display:flex;}.items-center{align-items:center;}.justify-between{justify-content:space-between;}
+        .gap-1{gap:0.5rem;}.gap-2{gap:1rem;}
+        .mt-1{margin-top:0.5rem;}.mt-2{margin-top:1rem;}.mb-1{margin-bottom:0.5rem;}.mb-2{margin-bottom:1rem;}
+        .text-right{text-align:right;}.text-center{text-align:center;}
+        .text-success{color:var(--success)!important;}.text-danger{color:var(--danger)!important;}.text-primary{color:var(--primary)!important;}.text-muted{color:var(--text-muted);}.text-gray{color:var(--text-secondary);}
+        .font-bold{font-weight:700;}.font-800{font-weight:800;}
+        .w-full{width:100%;}
+        .flex-wrap{flex-wrap:wrap;}
+        hr{border:none;border-top:1px solid var(--border);margin:1.25rem 0;}
+        code{background:var(--bg-body);padding:0.2rem 0.5rem;border-radius:5px;font-size:0.8rem;font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--primary);border:1px solid var(--border);}
+        small{font-size:0.78rem;}
+
+        /* ── Responsive ── */
+        @media(max-width:1024px){
+            .sidebar{transform:translateX(-100%);}.sidebar.open{transform:translateX(0);}
+            .main{margin-left:0;padding:1rem;}
+            .form-row,.form-row-3,.form-row-4{grid-template-columns:1fr;}
+            .stats{grid-template-columns:1fr 1fr;}
+        }
+        @media(max-width:640px){
+            .stats{grid-template-columns:1fr;}
+            .header{flex-direction:column;align-items:flex-start;gap:0.75rem;}
+            .report-tabs{flex-direction:column;}
+        }
+
+        /* Mobile menu toggle */
+        .menu-btn{display:none;background:var(--primary-gradient);border:none;color:white;padding:0.6rem 0.9rem;border-radius:var(--radius-sm);cursor:pointer;font-size:1.1rem;}
+        @media(max-width:1024px){.menu-btn{display:flex;}}
+        .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:199;}
+        .overlay.active{display:block;}
+
+        /* ── Import/Export extras ── */
+        .import-zone{border:2px dashed var(--primary);border-radius:var(--radius);padding:2rem;text-align:center;background:rgba(99,102,241,0.03);cursor:pointer;transition:all 150ms;}
+        .import-zone:hover{background:rgba(99,102,241,0.08);transform:translateY(-2px);}
+        .import-zone.dragover{background:rgba(99,102,241,0.12);border-color:var(--primary-dark);}
+        .import-icon{font-size:2.5rem;margin-bottom:0.5rem;color:var(--primary);}
+
+        /* ── DB Save Path UI ── */
+        .path-selector{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;}
+        .path-display{flex:1;min-width:200px;background:var(--bg-body);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.6rem 1rem;font-size:0.85rem;font-family:monospace;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+        /* ── Category chips ── */
+        .category-chips{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.5rem;}
+        .cat-chip{display:inline-flex;align-items:center;gap:0.4rem;padding:0.35rem 0.75rem;border-radius:20px;font-size:0.78rem;font-weight:600;background:var(--bg-hover);border:1px solid var(--border);cursor:pointer;transition:all 150ms;color:var(--text-primary);}
+        .cat-chip:hover{border-color:var(--primary);color:var(--primary);}
+        .cat-chip .chip-del{cursor:pointer;opacity:0.6;font-size:0.7rem;margin-left:0.2rem;}
+        .cat-chip .chip-del:hover{opacity:1;color:var(--danger);}
+        .cat-chip.active-chip{background:var(--primary-gradient);color:white;border-color:transparent;}
+
+        /* ── Expiry badge ── */
+        .badge-expiry-ok{background:rgba(16,185,129,0.1);color:var(--success);border:1px solid rgba(16,185,129,0.2);}
+        .badge-expiry-warn{background:rgba(245,158,11,0.1);color:var(--warning);border:1px solid rgba(245,158,11,0.2);}
+        .badge-expiry-expired{background:rgba(239,68,68,0.1);color:var(--danger);border:1px solid rgba(239,68,68,0.2);}
+    </style>
+    <style>
+        /* ── Theme Modal ── */
+        .theme-modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.75);backdrop-filter:blur(6px);z-index:2000;display:none;align-items:center;justify-content:center;padding:1rem;}
+        .theme-modal-overlay.open{display:flex;}
+        .theme-modal{background:var(--bg-card);border-radius:var(--radius-lg);width:100%;max-width:700px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 25px 60px rgba(0,0,0,0.4);border:1px solid var(--border);animation:modalIn 0.2s ease;}
+        .theme-modal-hdr{padding:1.25rem 1.5rem;background:var(--primary-gradient);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+        .theme-modal-hdr h3{color:white;font-size:1.1rem;font-weight:700;}
+        .theme-modal-body{padding:1.5rem;overflow-y:auto;flex:1;}
+        .theme-section-title{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:700;margin-bottom:0.875rem;margin-top:1.25rem;}
+        .theme-section-title:first-child{margin-top:0;}
+        .theme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:0.75rem;margin-bottom:0.5rem;}
+        .theme-swatch{border:2px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;overflow:hidden;transition:all 150ms;background:var(--bg-body);}
+        .theme-swatch:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow);}
+        .theme-swatch.active{border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,102,241,0.2);}
+        .theme-preview{display:flex;height:60px;}
+        .theme-preview-sidebar{width:28%;flex-shrink:0;}
+        .theme-preview-content{flex:1;padding:6px;display:flex;flex-direction:column;gap:3px;}
+        .theme-preview-bar{border-radius:2px;height:8px;}
+        .theme-preview-bar.wide{width:80%;}
+        .theme-preview-bar.medium{width:55%;}
+        .theme-preview-bar.narrow{width:35%;}
+        .theme-label{padding:0.4rem 0.5rem;font-size:0.72rem;font-weight:600;text-align:center;border-top:1px solid var(--border);}
+        .theme-controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+        .theme-ctrl label{display:block;font-size:0.8rem;font-weight:600;margin-bottom:0.4rem;}
+        .theme-ctrl input[type=range]{width:100%;accent-color:var(--primary);}
+        .theme-toggles{display:flex;gap:0.5rem;flex-wrap:wrap;}
+        .theme-toggles .btn{flex:1;min-width:140px;}
+        /* ── Theme Toggle Button ── */
+        .theme-toggle{display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 0.875rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-body);color:var(--text-primary);cursor:pointer;font-size:0.82rem;font-weight:600;transition:all 150ms;font-family:inherit;}
+        .theme-toggle:hover{background:var(--bg-hover);border-color:var(--primary);color:var(--primary);}
+    </style>
+<base target="_blank">
+</head>
+<body>
+<div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo">
+            <span class="logo-icon">📦</span>
+            <span class="logo-text">Ñemuha</span>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Principal</div>
+            <div class="nav-item active" data-sec="dashboard" onclick="App.show('dashboard')"><span class="nav-icon">📊</span>Dashboard</div>
+            <div class="nav-item" data-sec="ventas" onclick="App.show('ventas')"><span class="nav-icon">💰</span>Ventas<span class="nav-badge" id="badge-ventas">0</span></div>
+            <div class="nav-item" data-sec="pedidos" onclick="App.show('pedidos')"><span class="nav-icon">📅</span>Pedidos<span class="nav-badge" id="badge-pedidos">0</span></div>
+            <div class="nav-item" data-sec="compras" onclick="App.show('compras')"><span class="nav-icon">📥</span>Compras<span class="nav-badge" id="badge-compras">0</span></div>
+            <div class="nav-item" data-sec="caja" onclick="App.show('caja')"><span class="nav-icon">💵</span>Caja</div>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Gestión</div>
+            <div class="nav-item" data-sec="inventario" onclick="App.show('inventario')"><span class="nav-icon">📦</span>Inventario<span class="nav-badge" id="badge-productos">0</span></div>
+            <div class="nav-item" data-sec="clientes" onclick="App.show('clientes')"><span class="nav-icon">👥</span>Clientes<span class="nav-badge" id="badge-clientes">0</span></div>
+            <div class="nav-item" data-sec="proveedores" onclick="App.show('proveedores')"><span class="nav-icon">🏢</span>Proveedores</div>
+            <div class="nav-item" data-sec="pagos" onclick="App.show('pagos')"><span class="nav-icon">💳</span>Pagos Proveedores<span class="nav-badge" id="badge-pagos">0</span></div>
+            <div class="nav-item" data-sec="nomina" onclick="App.show('nomina')"><span class="nav-icon">👷</span>Nómina / Empleados</div>
+            <div class="nav-item" data-sec="vendedores" onclick="App.show('vendedores')"><span class="nav-icon">🏅</span>Vendedores<span class="nav-badge" id="badge-vendedores">0</span></div>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Análisis</div>
+            <div class="nav-item" data-sec="reportes" onclick="App.show('reportes')"><span class="nav-icon">📈</span>Reportes</div>
+            <div class="nav-item" data-sec="warehouse" onclick="App.show('warehouse')"><span class="nav-icon">📊</span>Inventario Visual</div>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Sistema</div>
+            <div class="nav-item" data-sec="config" onclick="App.show('config')"><span class="nav-icon">⚙️</span>Configuración</div>
+        </div>
+        <div class="nav-section" style="margin-top:auto;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.07)">
+            <div style="padding:0 0.5rem 0.5rem;font-size:0.75rem;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="nav-user-email"></div>
+            <div class="nav-item" onclick="Auth.logout()" style="color:var(--danger)"><span class="nav-icon">🚪</span>Cerrar Sesión</div>
+        </div>
+    </aside>
+    <div class="overlay" id="overlay" onclick="App.closeSidebar()"></div>
+
+    <main class="main">
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="section animate-in">
+            <div class="header">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <button class="menu-btn" onclick="App.openSidebar()">☰</button>
+                        <h1>Dashboard</h1>
+                    </div>
+                    <div class="breadcrumb">📍 <span id="fecha-actual"></span></div>
+                </div>
+                <div class="header-actions">
+                    <div class="currency-selector">
+                        <button class="currency-option active" onclick="App.setMoneda('PYG')">₲ PYG</button>
+                        <button class="currency-option" onclick="App.setMoneda('USD')">$ USD</button>
+                        <button class="currency-option" onclick="App.setMoneda('EUR')">€ EUR</button>
+                    </div>
+                    <button class="theme-toggle" onclick="Themes.openModal()" title="Cambiar tema visual">🎨 Temas</button>
+                </div>
+            </div>
+            <div class="stats">
+                <div class="stat-card"><div class="stat-header"><span class="stat-icon">💰</span><span class="stat-trend">Hoy</span></div><div class="stat-value" id="stat-hoy">₲ 0</div><div class="stat-label">Ventas Hoy</div></div>
+                <div class="stat-card success"><div class="stat-header"><span class="stat-icon">📈</span><span class="stat-trend">Mes</span></div><div class="stat-value" id="stat-mes">₲ 0</div><div class="stat-label">Ventas del Mes</div></div>
+                <div class="stat-card warning"><div class="stat-header"><span class="stat-icon">📦</span></div><div class="stat-value" id="stat-productos">0</div><div class="stat-label">Productos Activos</div></div>
+                <div class="stat-card danger"><div class="stat-header"><span class="stat-icon">⚠️</span></div><div class="stat-value" id="stat-stock-bajo">0</div><div class="stat-label">Stock Crítico</div></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">📊 Tendencia de Ventas (últimas 7)</h3></div>
+                <div class="card-body"><div id="chart-ventas" class="bar-chart"></div></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">📋 Últimas Ventas</h3></div>
+                <div class="table-wrap"><table><thead><tr><th>Factura</th><th>Cliente</th><th>Vendedor</th><th>Total</th><th>Estado</th></tr></thead><tbody id="dash-ventas"></tbody></table></div>
+            </div>
+        </section>
+
+        <!-- VENTAS -->
+        <section id="ventas" class="section hidden">
+            <div class="header">
+                <div>
+                    <div class="flex items-center gap-2"><button class="menu-btn" onclick="App.openSidebar()">☰</button><h1>Ventas</h1></div>
+                    <div class="breadcrumb">📝 Gestión de ventas y facturación</div>
+                </div>
+                <button class="btn btn-primary btn-lg" onclick="Ventas.abrirModal()">+ Nueva Venta</button>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📋 Historial de Ventas</h3>
+                    <input type="text" class="form-input" placeholder="Buscar..." style="width:200px" onkeyup="Ventas.filtrar(this.value)">
+                </div>
+                <div class="table-wrap"><table><thead><tr><th>Factura</th><th>Fecha</th><th>Cliente</th><th>Vendedor</th><th>Canal</th><th>Entrega</th><th>Total</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tabla-ventas"></tbody></table></div>
+            </div>
+        </section>
+
+        <!-- PEDIDOS PROGRAMADOS -->
+        <section id="pedidos" class="section hidden">
+            <div class="header">
+                <div>
+                    <div class="flex items-center gap-2"><button class="menu-btn" onclick="App.openSidebar()">☰</button><h1>Pedidos Programados</h1></div>
+                    <div class="breadcrumb">📅 Ventas futuras y órdenes pendientes de entrega</div>
+                </div>
+                <button class="btn btn-primary btn-lg" onclick="Ventas.abrirModal()">+ Nuevo Pedido</button>
+            </div>
+            <div class="stats">
+                <div class="stat-card warning"><div class="stat-header"><span class="stat-icon">⏳</span></div><div class="stat-value" id="ped-stat-pendientes">0</div><div class="stat-label">Pendientes</div></div>
+                <div class="stat-card"><div class="stat-header"><span class="stat-icon">✅</span></div><div class="stat-value" id="ped-stat-confirmados">0</div><div class="stat-label">Confirmados</div></div>
+                <div class="stat-card success"><div class="stat-header"><span class="stat-icon">🚚</span></div><div class="stat-value" id="ped-stat-entregados">0</div><div class="stat-label">Entregados hoy</div></div>
+                <div class="stat-card danger"><div class="stat-header"><span class="stat-icon">⚠️</span></div><div class="stat-value" id="ped-stat-vencidos">0</div><div class="stat-label">Vencidos / Atrasados</div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📋 Lista de Pedidos</h3>
+                    <div class="flex gap-1 flex-wrap">
+                        <button class="btn btn-secondary btn-sm" onclick="Pedidos.filtrar('todos')">Todos</button>
+                        <button class="btn btn-secondary btn-sm" onclick="Pedidos.filtrar('pendiente')">⏳ Pendientes</button>
+                        <button class="btn btn-secondary btn-sm" onclick="Pedidos.filtrar('confirmado')">✅ Confirmados</button>
+                        <button class="btn btn-secondary btn-sm" onclick="Pedidos.filtrar('en_camino')">🛵 En camino</button>
+                        <button class="btn btn-secondary btn-sm" onclick="Pedidos.filtrar('entregado')">📦 Entregados</button>
+                        <button class="btn btn-secondary btn-sm" onclick="Pedidos.filtrar('cancelado')">❌ Cancelados</button>
+                    </div>
+                </div>
+                <div id="pedidos-lista" class="card-body" style="padding:1rem"></div>
+            </div>
+        </section>
+
+        <!-- NÓMINA / EMPLEADOS -->
+        <section id="nomina" class="section hidden">
+            <div class="header">
+                <div>
+                    <div class="flex items-center gap-2"><button class="menu-btn" onclick="App.openSidebar()">☰</button><h1>Nómina y Empleados</h1></div>
+                    <div class="breadcrumb">👷 Control de pagos a empleados</div>
+                </div>
+                <button class="btn btn-primary btn-lg" onclick="Nomina.abrirModalEmpleado()">+ Nuevo Empleado</button>
+                <button class="btn btn-danger btn-sm" id="btn-eliminar-empleado" style="display:none" onclick="Nomina.eliminarSeleccionado()">🗑️ Eliminar</button>
+            </div>
+            <div class="stats">
+                <div class="stat-card danger"><div class="stat-header"><span class="stat-icon">💸</span></div><div class="stat-value" id="nom-stat-masa">₲ 0</div><div class="stat-label">Masa Salarial / mes</div></div>
+                <div class="stat-card warning"><div class="stat-header"><span class="stat-icon">⏳</span></div><div class="stat-value" id="nom-stat-pendiente">₲ 0</div><div class="stat-label">Pendiente de pago</div></div>
+                <div class="stat-card success"><div class="stat-header"><span class="stat-icon">✅</span></div><div class="stat-value" id="nom-stat-pagado">₲ 0</div><div class="stat-label">Pagado este mes</div></div>
+                <div class="stat-card"><div class="stat-header"><span class="stat-icon">👥</span></div><div class="stat-value" id="nom-stat-empleados">0</div><div class="stat-label">Empleados activos</div></div>
+            </div>
+            <!-- Lista empleados -->
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">👥 Plantilla</h3></div>
+                <div class="table-wrap"><table><thead><tr><th style="width:36px"><input type="checkbox" id="nom-sel-all" onchange="Nomina.toggleSelectAll(this)"></th><th>Empleado</th><th>Cargo</th><th>Salario Base</th><th>Tipo</th><th>Último Pago</th><th>Estado mes</th><th>Acciones</th></tr></thead><tbody id="nom-empleados"></tbody></table></div>
+            </div>
+            <!-- Historial pagos -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📋 Historial de Pagos</h3>
+                    <select id="nom-filtro-mes" class="form-select" style="width:160px;padding:0.45rem;font-size:0.8rem" onchange="Nomina.render()">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Empleado</th><th>Concepto</th><th>Monto</th><th>Método</th><th>Período</th></tr></thead><tbody id="nom-historial"></tbody></table></div>
+            </div>
+        </section>
+        <section id="compras" class="section hidden">
+            <div class="header">
+                <div>
+                    <div class="flex items-center gap-2"><button class="menu-btn" onclick="App.openSidebar()">☰</button><h1>Compras</h1></div>
+                    <div class="breadcrumb">📥 Ingreso de mercadería</div>
+                </div>
+                <button class="btn btn-success btn-lg" onclick="Compras.abrirModal()">+ Nueva Compra</button>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">📋 Historial de Compras</h3></div>
+                <div class="table-wrap"><table><thead><tr><th>N°</th><th>Fecha</th><th>Proveedor</th><th>Items</th><th>Total</th><th>Condición</th></tr></thead><tbody id="tabla-compras"></tbody></table></div>
+            </div>
+        </section>
+
+        <!-- CAJA -->
+        <section id="caja" class="section hidden">
+            <div class="header">
+                <div>
+                    <div class="flex items-center gap-2"><button class="menu-btn" onclick="App.openSidebar()">☰</button><h1>Control de Caja</h1></div>
+                    <div class="breadcrumb">💵 Movimientos del día</div>
+                </div>
+                <button class="btn btn-danger" onclick="Caja.cerrar()">🔒 Cerrar Caja</button>
+            </div>
+            <div class="stats">
+                <div class="stat-card success"><div class="stat-header"><span class="stat-icon">₲</span></div><div class="stat-value text-success" id="caja-pyg" style="-webkit-text-fill-color:var(--success)">₲ 0</div><div class="stat-label">Guaraníes (PYG)</div></div>
+                <div class="stat-card"><div class="stat-header"><span class="stat-icon">💵</span></div><div class="stat-value" id="caja-usd">$ 0</div><div class="stat-label">Dólares (USD)</div></div>
+                <div class="stat-card"><div class="stat-header"><span class="stat-icon">💶</span></div><div class="stat-value" id="caja-eur">€ 0</div><div class="stat-label">Euros (EUR)</div></div>
+                <div class="stat-card warning"><div class="stat-header"><span class="stat-icon">🕐</span></div><div class="stat-label">Apertura</div><div id="caja-apertura" class="font-800" style="font-size:1.5rem;margin-top:0.3rem">--:--</div></div>
+            </div>
+            <div class="card"><div class="card-body">
+                <h4 class="mb-2">📝 Registrar Movimiento</h4>
+                <div class="form-row-4">
+                    <div class="form-group"><input type="text" id="m-concepto" class="form-input" placeholder="Concepto (ej: Pago delivery)"></div>
+                    <div class="form-group"><input type="number" id="m-monto" class="form-input" placeholder="Monto" min="0"></div>
+                    <div class="form-group"><select id="m-moneda" class="form-select"><option value="PYG">₲ Guaraníes</option><option value="USD">$ Dólares</option><option value="EUR">€ Euros</option></select></div>
+                    <div class="flex gap-1"><button class="btn btn-success" onclick="Caja.mov('entrada')">⬇️ Ingreso</button><button class="btn btn-danger" onclick="Caja.mov('salida')">⬆️ Egreso</button></div>
+                </div>
+            </div></div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📋 Movimientos del Día</h3>
+                    <div class="flex gap-1">
+                        <button class="btn btn-secondary btn-sm" onclick="Caja.filtrar('todos')">Todos</button>
+                        <button class="btn btn-secondary btn-sm" onclick="Caja.filtrar('entrada')">Ingresos</button>
+                        <button class="btn btn-secondary btn-sm" onclick="Caja.filtrar('salida')">Egresos</button>
+                    </div>
+                </div>
+                <div class="table-wrap"><table><thead><tr><th>Hora</th><th>Tipo</th><th>Concepto</th><th>Moneda</th><th>Monto</th></tr></thead><tbody id="caja-movimientos"></tbody></table></div>
+            </div>
+        </section>
+
+        <!-- INVENTARIO -->
+        <section id="inventario" class="section hidden">
+            <div class="header">
+                <div>
+                    <div class="flex items-center gap-2"><button class="menu-btn" onclick="App.openSidebar()">☰</button><h1>Inventario</h1></div>
+                    <div class="breadcrumb">📦 Productos en stock</div>
+                </div>
+                <div class="flex gap-1 flex-wrap">
+                    <input type="text" class="form-input" placeholder="Buscar..." style="width:220px" onkeyup="Inventario.buscar(this.value)">
+                    <button class="btn btn-primary" onclick="Inventario.abrirModalAgregar()">➕ Nuevo Producto</button>
+                    <button class="btn btn-success" onclick="Inventario.abrirModalImportar()">📥 Importar Excel</button>
+                    <button class="btn btn-secondary" onclick="Inventario.exportar()">📤 Exportar CSV</button>
+                    <button class="btn btn-secondary" onclick="Inventario.abrirModalCategorias()">🏷️ Categorías</button>
+                </div>
+            </div>
+            
+            <!-- Ruta de guardado de base de datos -->
+            <div class="card" id="card-db-path">
+                <div class="card-header">
+                    <h3 class="card-title">💾 Base de Datos del Inventario</h3>
+                    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('card-db-path').classList.toggle('hidden')">▼</button>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-2" style="font-size:0.85rem">Seleccioná dónde guardar el archivo de base de datos del inventario. El archivo <code>.json</code> se descargará automáticamente en esa carpeta.</p>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nombre del archivo</label>
+                            <input type="text" id="db-filename" class="form-input" value="inventario_db" placeholder="inventario_db">
+                            <small class="text-muted">Se guardará como: <code id="db-filename-preview">inventario_db.json</code></small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Subcarpeta (opcional)</label>
+                            <input type="text" id="db-subfolder" class="form-input" placeholder="ej: mi_empresa/inventario">
+                            <small class="text-muted">Se creará dentro de tu carpeta de Descargas</small>
+                        </div>
+                    </div>
+                    <div class="flex gap-1 flex-wrap mt-1">
+                        <button class="btn btn-primary" onclick="Inventario.guardarDBArchivo()">💾 Guardar BD como archivo</button>
+                        <button class="btn btn-success" onclick="Inventario.cargarDBArchivo()">📂 Cargar BD desde archivo</button>
+                        <input type="file" id="db-load-file" class="hidden" accept=".json" onchange="Inventario.procesarCargaDB(this)">
+                        <button class="btn btn-warning" onclick="Backup.exportarJSON()">📤 Backup completo ERP</button>
+                    </div>
+                    <div id="db-save-status" class="hidden mt-2" style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:var(--radius-sm);padding:0.75rem 1rem;font-size:0.85rem;color:var(--success)"></div>
+                </div>
+            </div>
+            
+            <!-- Importación masiva -->
+            <div class="card hidden" id="card-importar">
+                <div class="card-header">
+                    <h3 class="card-title">📥 Importar Productos desde Excel</h3>
+                    <button class="btn btn-secondary btn-sm" onclick="Inventario.cerrarModalImportar()">✕</button>
+                </div>
+                <div class="card-body">
+                    <div class="import-zone" id="drop-zone" onclick="document.getElementById('import-excel-file').click()">
+                        <div class="import-icon">📊</div>
+                        <h4>Arrastrá tu archivo Excel aquí o hacé clic para seleccionar</h4>
+                        <p class="text-muted">Formatos soportados: .xlsx, .xls, .csv</p>
+                        <p class="text-muted" style="font-size:0.75rem;margin-top:0.5rem">Columnas requeridas: Código, Nombre, Categoría, Stock, Costo, Precio</p>
+                    </div>
+                    <input type="file" id="import-excel-file" class="hidden" accept=".xlsx,.xls,.csv" onchange="Inventario.procesarExcel(this)">
+                    
+                    <div id="preview-import" class="hidden mt-2">
+                        <h4 class="mb-1">👁️ Vista previa (<span id="preview-count">0</span> productos)</h4>
+                        <div class="table-wrap" style="max-height:300px;overflow-y:auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Nombre</th>
+                                        <th>Categoría</th>
+                                        <th>Stock</th>
+                                        <th>Costo</th>
+                                        <th>Precio</th>
+                                        <th>Margen</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="preview-tbody"></tbody>
+                            </table>
+                        </div>
+                        <div class="flex gap-1 mt-2 justify-end">
+                            <button class="btn btn-secondary" onclick="Inventario.cancelarImportacion()">Cancelar</button>
+                            <button class="btn btn-success btn-lg" onclick="Inventario.confirmarImportacion()">✅ Importar <span id="btn-import-count">0</span> Productos</button>
+                        </div>
+                    </div>
+                    
+                    <div id="resultado-import" class="hidden mt-2">
+                        <div class="totals-box">
+                            <h4 class="mb-1">📊 Resultado de la Importación</h4>
+                            <div class="total-line"><span>✅ Importados:</span><strong id="res-importados" class="text-success">0</strong></div>
+                            <div class="total-line"><span>⚠️ Duplicados (omitidos):</span><strong id="res-duplicados" class="text-warning">0</strong></div>
+                            <div class="total-line"><span>❌ Errores:</span><strong id="res-errores" class="text-danger">0</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de inventario -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📦 Productos en Stock</h3>
+                    <span class="badge badge-info" id="inv-total-productos">0 productos</span>
+                </div>
+                <div class="table-wrap"><table><thead><tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Stock</th><th>Costo Prom.</th><th>Precio</th><th>Margen</th><th>Vencimiento</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tabla-productos"></tbody></table>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISUALIZACIÓN DE INVENTARIO -->
+        <section id="warehouse" class="section hidden">
+            <div class="header">
+                <div>
+                    <div class="flex items-center gap-2"><button class="menu-btn" onclick="App.openSidebar()">☰</button><h1>Mapa de Inventario</h1></div>
+                    <div class="breadcrumb">📊 Visualización del estado del stock por categoría y ubicación</div>
+                </div>
+                <div class="flex gap-1">
+                    <select id="inv-vis-filtro" class="form-select" style="width:160px;padding:0.45rem" onchange="InvVis.render()">
+                        <option value="todos">Todos</option>
+                        <option value="critico">🔴 Solo críticos</option>
+                        <option value="bajo">🟡 Stock bajo</option>
+                        <option value="ok">🟢 Stock OK</option>
+                    </select>
+                    <select id="inv-vis-orden" class="form-select" style="width:170px;padding:0.45rem" onchange="InvVis.render()">
+                        <option value="stock_asc">Stock ↑ (menor primero)</option>
+                        <option value="stock_desc">Stock ↓ (mayor primero)</option>
+                        <option value="nombre">Nombre A→Z</option>
+                        <option value="valor">Valor de stock ↓</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- KPIs rápidos -->
+            <div class="stats">
+                <div class="stat-card"><div class="stat-header"><span class="stat-icon">📦</span></div><div class="stat-value" id="w3d-stat-total">0</div><div class="stat-label">Productos totales</div></div>
+                <div class="stat-card success"><div class="stat-header"><span class="stat-icon">✅</span></div><div class="stat-value" id="w3d-stat-ok">0</div><div class="stat-label">Stock normal</div></div>
+                <div class="stat-card warning"><div class="stat-header"><span class="stat-icon">⚠️</span></div><div class="stat-value" id="w3d-stat-low">0</div><div class="stat-label">Stock bajo</div></div>
+                <div class="stat-card danger"><div class="stat-header"><span class="stat-icon">🚨</span></div><div class="stat-value" id="w3d-stat-crit">0</div><div class="stat-label">Stock crítico</div></div>
+            </div>
+
+            <!-- Heatmap de categorías + valor de inventario -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-bottom:1.5rem;" id="inv-vis-grid-top">
+                <div class="card" style="margin:0">
+                    <div class="card-header"><h3 class="card-title">🗂️ Stock por Categoría</h3></div>
+                    <div class="card-body" id="inv-cat-bars" style="padding:1rem 1.25rem"></div>
+                </div>
+                <div class="card" style="margin:0">
+                    <div class="card-header"><h3 class="card-title">💰 Valor de Inventario</h3></div>
+                    <div class="card-body" style="display:flex;flex-direction:column;gap:0.5rem;padding:1rem 1.25rem" id="inv-valor-list"></div>
+                </div>
+            </div>
+
+            <!-- Tarjetas de productos (heatmap visual) -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🏷️ Mapa de Productos</h3>
+                    <input type="text" class="form-input" placeholder="Buscar producto..." style="width:200px" onkeyup="InvVis.buscar(this.value)" id="inv-vis-search">
+                </div>
+                <div class="card-body" style="padding:1rem">
+                    <div id="inv-vis-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;"></div>
+                </div>
+            </div>
+
+            <!-- Tabla detallada -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📋 Detalle de Ubicaciones</h3>
+                    <input type="text" class="form-input" placeholder="Buscar producto..." style="width:200px" onkeyup="InvVis.buscar(this.value);document.getElementById('inv-vis-search').value=this.value">
+                </div>
+                <div class="table-wrap"><table><thead><tr><th>Producto</th><th>Categoría</th><th>Stock</th><th>Pasillo</th><th>Estante</th><th>Vencimiento</th><th>Estado</th></tr></thead><tbody id="warehouse-tabla"></tbody></table>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLIENTES -->
+        <section id="clientes" class="section hidden">
+            <div class="header">
+                <div>
+                    <div class="flex items-center gap-2"><button class="menu-btn" onclick="App.openSidebar()">☰</button><h1>Clientes</h1></div>
+                    <div class="breadcrumb">👥 Gestión de clientes y créditos</div>
+                </div>
+            </div>
+            <div class="card"><div class="card-body">
+                <h3 class="mb-2">➕ Nuevo Cliente</h3>
+                <form onsubmit="event.preventDefault();Entidades.guardar('clientes')">
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Nombre *</label><div class="input-group"><span class="input-icon">👤</span><input type="text" id="clientes-nombre" class="form-input" required placeholder="Juan Pérez"></div></div>
+                        <div class="form-group"><label class="form-label">RUC / CI</label><input type="text" id="clientes-ruc" class="form-input" placeholder="1234567-8"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Teléfono</label><input type="text" id="clientes-tel" class="form-input" placeholder="0981 234 567"></div>
+                        <div class="form-group"><label class="form-label">Email</label><input type="email" id="clientes-email" class="form-input" placeholder="correo@email.com"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Dirección</label><input type="text" id="clientes-direccion" class="form-input" placeholder="Av. Principal 123, Asunción"></div>
+                        <div class="form-group"><label class="form-label">Límite de Crédito (PYG)</label><input type="number" id="cliente-limite" class="form-input" value="0" min="0"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">💾 Guardar Cliente</button>
+                </form>
+            </div></div>
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">📋 Lista de Clientes</h3><input type="text" class="form-input" placeholder="Buscar..." style="width:200px" onkeyup="Entidades.filtrar('clientes',this.value)"></div>
+                <div class="table-wrap"><table><thead><tr><th>Cliente</th><th>RUC/CI</th><th>Contacto</th><th>Límite Crédito</th><th>Crédito Usado</th><th>Disponible</th><th>Acciones</th></tr></thead><tbody id="lista-clientes"></tbody></table></div>
+            </div>
+        </section>
+
+        <!-- PROVEEDORES -->
+        <section id="proveedores" class="section hidden">
+            <div class="header">
+                <div>
+                    <div class="flex items-center gap-2"><button class="menu-btn" onclick="App.openSidebar()">☰</button><h1>Proveedores</h1></div>
+                    <div class="breadcrumb">🏢 Gestión de proveedores</div>
+                </div>
+            </div>
+            <div class="card"><div class="card-body">
+                <h3 class="mb-2">➕ Nuevo Proveedor</h3>
+                <form onsubmit="event.preventDefault();Entidades.guardar('proveedores')">
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Razón Social *</label><input type="text" id="proveedores-nombre" class="form-input" required placeholder="Empresa S.A."></div>
+                        <div class="form-group"><label class="form-label">RUC</label><input type="text" id="proveedores-ruc" class="form-input" placeholder="80012345-6"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Teléfono</label><input type="text" id="proveedores-tel" class="form-input" placeholder="021 123 456"></div>
+                        <div class="form-group"><label class="form-label">Email</label><input type="email" id="proveedores-email" class="form-input" placeholder="contacto@empresa.com"></div>
+                    </div>
+                    <button type="submit" class="btn btn-success">💾 Guardar Proveedor</button>
+                </form>
+            </div></div>
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">📋 Lista de Proveedores</h3></div>
+                <div class="table-wrap"><table><thead><tr><th>Proveedor</th><th>RUC</th><th>Contacto</th><th>Compras</th><th>Total Comprado</th><th>Acciones</th></tr></thead><tbody id="lista-proveedores"></tbody></table></div>
+            </div>
+        </section>
+
+        <!-- VENDEDORES -->
+        <section id="vendedores" class="section hidden">
+            <div class="header">
+                <div>
+                    <div class="flex items-center gap-2"><button class="menu-btn" onclick="App.openSidebar()">☰</button><h1>Vendedores</h1></div>
+                    <div class="breadcrumb">🧑‍💼 Equipo de ventas</div>
+                </div>
+            </div>
+            <div class="card"><div class="card-body">
+                <h3 class="mb-2">➕ Nuevo Vendedor</h3>
+                <form onsubmit="event.preventDefault();Vendedores.guardar()">
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Nombre *</label><div class="input-group"><span class="input-icon">🧑‍💼</span><input type="text" id="vend-nombre" class="form-input" required placeholder="Nombre completo"></div></div>
+                        <div class="form-group"><label class="form-label">CI / Documento</label><input type="text" id="vend-ci" class="form-input" placeholder="1234567"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Teléfono</label><input type="text" id="vend-tel" class="form-input" placeholder="0981 234 567"></div>
+                        <div class="form-group"><label class="form-label">Comisión (%)</label><input type="number" id="vend-comision" class="form-input" value="5" min="0" max="100" step="0.5"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Email</label><input type="email" id="vend-email" class="form-input" placeholder="vendedor@empresa.com"></div>
+                        <div class="form-group"><label class="form-label">Estado</label><select id="vend-estado" class="form-select"><option value="true">✅ Activo</option><option value="false">❌ Inactivo</option></select></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">💾 Guardar Vendedor</button>
+                </form>
+            </div></div>
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">📋 Equipo de Ventas</h3></div>
+                <div class="table-wrap"><table><thead><tr><th>Vendedor</th><th>Contacto</th><th>Comisión</th><th>Ventas</th><th>Total Vendido</th><th>Comisión Ganada</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="lista-vendedores"></tbody></table></div>
+            </div>
+        </section>
+
+        <!-- PAGOS A PROVEEDORES -->
+        <section id="pagos" class="section hidden">
+            <div class="header">
+                <div>
+                    <div class="flex items-center gap-2"><button class="menu-btn" onclick="App.openSidebar()">☰</button><h1>Pagos a Proveedores</h1></div>
+                    <div class="breadcrumb">💳 Gestión de cuentas por pagar</div>
+                </div>
+                <button class="btn btn-primary btn-lg" onclick="PagosProveedores.abrirModal()">+ Registrar Pago</button>
+            </div>
+            <div class="stats">
+                <div class="stat-card danger"><div class="stat-header"><span class="stat-icon">⏳</span></div><div class="stat-value" id="pp-stat-pendiente">₲ 0</div><div class="stat-label">Total Pendiente</div></div>
+                <div class="stat-card warning"><div class="stat-header"><span class="stat-icon">📋</span></div><div class="stat-value" id="pp-stat-parcial">₲ 0</div><div class="stat-label">Pagos Parciales</div></div>
+                <div class="stat-card success"><div class="stat-header"><span class="stat-icon">✅</span></div><div class="stat-value" id="pp-stat-pagado">₲ 0</div><div class="stat-label">Pagado (mes)</div></div>
+                <div class="stat-card"><div class="stat-header"><span class="stat-icon">🏢</span></div><div class="stat-value" id="pp-stat-provs">0</div><div class="stat-label">Proveedores con Deuda</div></div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="card"><div class="card-body" style="padding:1rem 1.5rem">
+                <div class="flex gap-1 flex-wrap items-center">
+                    <strong style="font-size:0.85rem">Filtrar:</strong>
+                    <button class="btn btn-secondary btn-sm" onclick="PagosProveedores.filtrar('todos')">Todos</button>
+                    <button class="btn btn-secondary btn-sm" onclick="PagosProveedores.filtrar('pendiente')">⏳ Pendientes</button>
+                    <button class="btn btn-secondary btn-sm" onclick="PagosProveedores.filtrar('parcial')">🔶 Parciales</button>
+                    <button class="btn btn-secondary btn-sm" onclick="PagosProveedores.filtrar('pagada')">✅ Pagadas</button>
+                    <select id="pp-filtro-prov" class="form-select" style="width:200px;padding:0.45rem 0.875rem;font-size:0.8rem" onchange="PagosProveedores.render()">
+                        <option value="">Todos los proveedores</option>
+                    </select>
+                </div>
+            </div></div>
+
+            <!-- Lista de compras a pagar -->
+            <div id="pp-lista"></div>
+
+            <!-- Historial de pagos -->
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">📋 Historial de Pagos</h3></div>
+                <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Proveedor</th><th>Compra Ref.</th><th>Concepto</th><th>Moneda</th><th>Monto</th><th>Método</th></tr></thead><tbody id="pp-historial"></tbody></table></div>
+            </div>
+        </section>
+
+        <!-- REPORTES -->
+        <section id="reportes" class="section hidden">
+            <div class="header">
+                <div>
+                    <div class="flex items-center gap-2"><button class="menu-btn" onclick="App.openSidebar()">☰</button><h1>Reportes</h1></div>
+                    <div class="breadcrumb">📈 Análisis y estadísticas del negocio</div>
+                </div>
+                <div class="flex gap-1">
+                    <select id="rep-periodo" class="form-select" style="width:160px" onchange="Reportes.render()">
+                        <option value="7">Últimos 7 días</option>
+                        <option value="30" selected>Últimos 30 días</option>
+                        <option value="90">Últimos 90 días</option>
+                        <option value="365">Este año</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="Reportes.exportarCSV()">📥 CSV</button>
+                </div>
+            </div>
+
+            <div class="report-tabs">
+                <button class="report-tab active" onclick="Reportes.tab('ventas-tab')">💰 Ventas</button>
+                <button class="report-tab" onclick="Reportes.tab('productos-tab')">📦 Productos</button>
+                <button class="report-tab" onclick="Reportes.tab('vendedores-tab')">🧑‍💼 Vendedores</button>
+                <button class="report-tab" onclick="Reportes.tab('clientes-tab')">👥 Clientes</button>
+                <button class="report-tab" onclick="Reportes.tab('compras-tab')">📥 Compras</button>
+            </div>
+
+            <!-- TAB: Ventas -->
+            <div id="ventas-tab" class="report-panel active">
+                <div class="kpi-row" id="rep-kpi-ventas"></div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">📊 Ventas por Día</h3></div>
+                    <div class="card-body"><div id="rep-chart-diario" class="bar-chart"></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">💳 Ventas por Método de Pago</h3></div>
+                    <div class="card-body"><div id="rep-metodos" class="donut-wrap"><canvas id="rep-donut" width="180" height="180"></canvas><div id="rep-donut-legend" class="donut-legend"></div></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">📋 Detalle de Ventas</h3></div>
+                    <div class="table-wrap"><table><thead><tr><th>Factura</th><th>Fecha</th><th>Cliente</th><th>Vendedor</th><th>Método</th><th>Total</th><th>Estado</th></tr></thead><tbody id="rep-tabla-ventas"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- TAB: Productos -->
+            <div id="productos-tab" class="report-panel">
+                <div class="kpi-row" id="rep-kpi-productos"></div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">🏆 Top 10 Productos más Vendidos</h3></div>
+                    <div class="card-body"><div id="rep-top-productos" class="bar-chart" style="height:240px;"></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">⚠️ Productos con Stock Crítico</h3></div>
+                    <div class="table-wrap"><table><thead><tr><th>Código</th><th>Nombre</th><th>Stock</th><th>Costo</th><th>Precio</th><th>Estado</th></tr></thead><tbody id="rep-stock-critico"></tbody></table></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">📊 Ventas por Categoría</h3></div>
+                    <div class="card-body"><div id="rep-chart-categorias" class="bar-chart" style="height:180px;"></div></div>
+                </div>
+            </div>
+
+            <!-- TAB: Vendedores -->
+            <div id="vendedores-tab" class="report-panel">
+                <div class="kpi-row" id="rep-kpi-vendedores"></div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">🏆 Ranking de Vendedores</h3></div>
+                    <div class="card-body"><div id="rep-ranking-vendedores" class="bar-chart" style="height:220px;"></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">📋 Detalle por Vendedor</h3></div>
+                    <div class="table-wrap"><table><thead><tr><th>Vendedor</th><th>Ventas</th><th>Total Vendido</th><th>Ticket Promedio</th><th>Comisión %</th><th>Comisión Ganada</th></tr></thead><tbody id="rep-tabla-vendedores"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- TAB: Clientes -->
+            <div id="clientes-tab" class="report-panel">
+                <div class="kpi-row" id="rep-kpi-clientes"></div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">🏆 Top Clientes por Compras</h3></div>
+                    <div class="card-body"><div id="rep-top-clientes" class="bar-chart" style="height:220px;"></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">📋 Detalle de Clientes</h3></div>
+                    <div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Compras</th><th>Total</th><th>Ticket Prom.</th><th>Última Compra</th><th>Crédito Pendiente</th></tr></thead><tbody id="rep-tabla-clientes"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- TAB: Compras -->
+            <div id="compras-tab" class="report-panel">
+                <div class="kpi-row" id="rep-kpi-compras"></div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">📊 Compras por Período</h3></div>
+                    <div class="card-body"><div id="rep-chart-compras" class="bar-chart"></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">🏢 Compras por Proveedor</h3></div>
+                    <div class="table-wrap"><table><thead><tr><th>Proveedor</th><th>Órdenes</th><th>Total Comprado</th><th>Última Compra</th><th>Condición</th></tr></thead><tbody id="rep-tabla-compras"></tbody></table></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONFIG -->
+        <section id="config" class="section hidden">
+            <div class="header">
+                <div class="flex items-center gap-2"><button class="menu-btn" onclick="App.openSidebar()">☰</button><h1>⚙️ Configuración</h1></div>
+            </div>
+            <div class="card"><div class="card-body">
+                <h3 class="mb-2">🏢 Datos de la Empresa</h3>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Nombre</label><input type="text" class="form-input" id="cfg-nombre" onchange="DB.data.config.empresa.nombre=this.value;DB.guardar()"></div>
+                    <div class="form-group"><label class="form-label">RUC</label><input type="text" class="form-input" id="cfg-ruc" onchange="DB.data.config.empresa.ruc=this.value;DB.guardar()"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Dirección</label><input type="text" class="form-input" id="cfg-direccion" onchange="DB.data.config.empresa.direccion=this.value;DB.guardar()"></div>
+                    <div class="form-group"><label class="form-label">Teléfono</label><input type="text" class="form-input" id="cfg-telefono" onchange="DB.data.config.empresa.telefono=this.value;DB.guardar()"></div>
+                </div>
+                <hr>
+                <h3 class="mb-2">💱 Tipos de Cambio</h3>
+                <div class="form-row-3">
+                    <div class="form-group"><label class="form-label">Moneda Principal</label><select class="form-select" id="cfg-moneda-principal" onchange="DB.data.config.moneda.principal=this.value;DB.guardar();App.setMoneda(this.value)"><option value="PYG">🇵🇾 Guaraní (PYG)</option><option value="USD">🇺🇸 Dólar (USD)</option></select></div>
+                    <div class="form-group"><label class="form-label">1 USD → PYG</label><input type="number" class="form-input" id="cfg-cambio-usd" onchange="DB.data.config.moneda.cambioUSD=parseInt(this.value);DB.guardar()"></div>
+                    <div class="form-group"><label class="form-label">1 EUR → PYG</label><input type="number" class="form-input" id="cfg-cambio-eur" onchange="DB.data.config.moneda.cambioEUR=parseInt(this.value);DB.guardar()"></div>
+                </div>
+                <hr>
+                <h3 class="mb-2">⚠️ Zona de Peligro</h3>
+                <div class="flex gap-1 flex-wrap">
+                    <button class="btn btn-warning" onclick="DummyData.populate()">🚀 Cargar Datos Demo</button>
+                    <button class="btn btn-danger" onclick="if(confirm('¿SEGURO? Se borrarán TODOS los datos permanentemente.')){localStorage.removeItem('erp_data');localStorage.removeItem('erp_data_ts');IDB.del('erp_data').then(()=>location.reload());}">🗑️ Limpiar Datos</button>
+                    <button class="btn btn-success" onclick="Backup.exportarExcel()">📊 Exportar Excel</button>
+                    <button class="btn btn-secondary" onclick="Backup.exportarJSON()">💾 Backup JSON</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">📥 Importar Backup</button>
+                    <input type="file" id="import-file" class="hidden" accept=".json" onchange="App.importarDatos(this)">
+                </div>
+                <p class="text-muted mt-1" style="font-size:0.78rem">💡 El Excel exporta todas las tablas en hojas separadas. El JSON es para backup completo y restauración.</p>
+            </div></div>
+        </section>
+    </main>
+</div>
+<!-- MODAL VENTA -->
+<div class="modal" id="modal-venta">
+    <div class="modal-content" style="max-width:920px">
+        <div class="modal-header"><h3>📝 Nueva Venta</h3><button onclick="Ventas.cerrar()" class="btn btn-secondary btn-sm">✕</button></div>
+        <div class="modal-body">
+            <!-- Fila 1: Cliente + Vendedor -->
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Cliente</label><select id="v-cliente" class="form-select"><option value="">🚶 Cliente ocasional</option></select></div>
+                <div class="form-group"><label class="form-label">Vendedor / Comisionista *</label><select id="v-vendedor" class="form-select" required><option value="">Seleccionar...</option></select></div>
+            </div>
+            <!-- Fila 2: Canal + Tipo entrega -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">📡 Canal de Venta</label>
+                    <select id="v-canal" class="form-select" onchange="Ventas.onCanalChange(this.value)">
+                        <option value="presencial">🏪 Presencial (mostrador)</option>
+                        <option value="whatsapp">💬 WhatsApp</option>
+                        <option value="instagram">📸 Instagram</option>
+                        <option value="facebook">👍 Facebook</option>
+                        <option value="web">🌐 E-commerce / Web</option>
+                        <option value="telefono">📞 Teléfono</option>
+                        <option value="subvendedor">🤝 Sub-vendedor</option>
+                        <option value="comisionista">💰 Comisionista externo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">🚚 Tipo de Entrega</label>
+                    <select id="v-entrega" class="form-select" onchange="Ventas.onEntregaChange(this.value)">
+                        <option value="pickup">🏪 Retiro en local (Pick Up)</option>
+                        <option value="delivery_propio">🛵 Delivery propio</option>
+                        <option value="delivery_tercero">📦 Delivery tercerizado</option>
+                        <option value="encomienda">✈️ Encomienda / Envío</option>
+                        <option value="digital">💻 Entrega digital</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Delivery fields (condicionales) -->
+            <div id="v-delivery-fields" style="display:none">
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">📍 Dirección de entrega</label><input type="text" id="v-direccion-entrega" class="form-input" placeholder="Calle, número, barrio, ciudad"></div>
+                    <div class="form-group"><label class="form-label">💰 Costo delivery (PYG)</label><input type="number" id="v-costo-delivery" class="form-input" value="0" min="0" oninput="Ventas.renderItems()"></div>
+                </div>
+                <div class="form-group" id="v-empresa-delivery-group" style="display:none"><label class="form-label">🏢 Empresa de delivery / encomienda</label><input type="text" id="v-empresa-delivery" class="form-input" placeholder="Ej: PedidosYa, Copaco, etc."></div>
+            </div>
+            <!-- Digital delivery -->
+            <div id="v-digital-fields" style="display:none">
+                <div class="form-group"><label class="form-label">🔗 Link / Dato de entrega digital</label><input type="text" id="v-digital-link" class="form-input" placeholder="Link de descarga, código de acceso, etc."></div>
+            </div>
+            <!-- Comisionista externo -->
+            <div id="v-comisionista-fields" style="display:none">
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">👤 Nombre del comisionista</label><input type="text" id="v-comisionista-nombre" class="form-input" placeholder="Nombre completo"></div>
+                    <div class="form-group"><label class="form-label">💸 Comisión del comisionista (%)</label><input type="number" id="v-comisionista-pct" class="form-input" value="5" min="0" max="100" oninput="Ventas.renderItems()"></div>
+                </div>
+            </div>
+            <!-- Fila 3: Pago + Cuotas / Programada -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">💳 Método de Pago</label>
+                    <select id="v-metodo" class="form-select" onchange="Ventas.onMetodoChange(this.value)">
+                        <option value="efectivo">💵 Efectivo (PYG)</option>
+                        <option value="efectivo_usd">💵 Efectivo (USD)</option>
+                        <option value="tarjeta">💳 Tarjeta</option>
+                        <option value="transferencia">🏦 Transferencia</option>
+                        <option value="tigo_money">📱 Tigo Money</option>
+                        <option value="personal_pay">📱 Personal Pay</option>
+                        <option value="credito">📋 Crédito (Cta. Cte.)</option>
+                    </select>
+                </div>
+                <div class="form-group" id="v-credito-group" style="display:none">
+                    <label class="form-label">Cuotas</label>
+                    <select id="v-cuotas" class="form-select"><option value="1">1 cuota</option><option value="3">3 cuotas</option><option value="6">6 cuotas</option><option value="12">12 cuotas</option></select>
+                </div>
+            </div>
+            <!-- Venta programada -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">📅 ¿Es un pedido programado?</label>
+                    <select id="v-programada" class="form-select" onchange="Ventas.onProgramadaChange(this.value)">
+                        <option value="no">No — venta inmediata</option>
+                        <option value="si">Sí — programar para después</option>
+                    </select>
+                </div>
+                <div class="form-group" id="v-fecha-entrega-group" style="display:none">
+                    <label class="form-label">📅 Fecha/hora de entrega</label>
+                    <input type="datetime-local" id="v-fecha-entrega" class="form-input">
+                </div>
+            </div>
+            <div class="form-group" id="v-notas-group">
+                <label class="form-label">📝 Notas internas</label>
+                <input type="text" id="v-notas" class="form-input" placeholder="Instrucciones especiales, referencias, etc.">
+            </div>
+            <hr>
+            <h4 class="mb-1">🛒 Agregar Productos</h4>
+            <div class="form-row-4">
+                <div class="form-group"><select id="v-producto" class="form-select"><option value="">Buscar producto...</option></select></div>
+                <div class="form-group"><input type="number" id="v-cantidad" class="form-input" value="1" min="1" placeholder="Cant."></div>
+                <div class="form-group"><input type="number" id="v-descuento" class="form-input" value="0" min="0" max="100" placeholder="Desc %"></div>
+                <button onclick="Ventas.agregarItem()" class="btn btn-primary">+ Agregar</button>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>Producto</th><th>Cant</th><th>Precio</th><th>Desc</th><th>Subtotal</th><th></th></tr></thead><tbody id="v-items"></tbody></table></div>
+            <div class="totals-box">
+                <div class="total-line"><span>Subtotal:</span><strong id="v-subtotal">₲ 0</strong></div>
+                <div class="total-line"><span>IVA (10%):</span><strong id="v-iva">₲ 0</strong></div>
+                <div class="total-line" id="v-delivery-line" style="display:none"><span>🚚 Delivery:</span><strong id="v-delivery-monto" class="text-primary">₲ 0</strong></div>
+                <div class="total-line" id="v-comision-line" style="display:none"><span>💸 Comisión ext.:</span><strong id="v-comision-monto" style="color:var(--warning)">₲ 0</strong></div>
+                <div class="total-line grand"><span>TOTAL A PAGAR:</span><span id="v-total">₲ 0</span></div>
+            </div>
+            <div id="v-pago-efectivo" class="form-row mt-2" style="display:none">
+                <div class="form-group"><label class="form-label">Monto recibido</label><input type="number" id="v-recibido" class="form-input" oninput="Ventas.calcularCambio()" placeholder="0"></div>
+                <div class="form-group"><label class="form-label">Cambio a entregar</label><div id="v-cambio-display" class="form-input" style="display:flex;align-items:center;font-weight:700;color:var(--success)">₲ 0</div></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="Ventas.cerrar()" class="btn btn-secondary">Cancelar</button>
+            <button onclick="Ventas.guardar()" class="btn btn-primary btn-lg">💾 Guardar Venta</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL COMPRA -->
+<div class="modal" id="modal-compra">
+    <div class="modal-content">
+        <div class="modal-header"><h3>📥 Nueva Compra</h3><button onclick="Compras.cerrar()" class="btn btn-secondary btn-sm">✕</button></div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Proveedor *</label><select id="c-proveedor" class="form-select" required><option value="">Seleccionar...</option></select></div>
+                <div class="form-group"><label class="form-label">Condición de Pago</label><select id="c-condicion" class="form-select"><option value="contado">💵 Contado</option><option value="credito">📋 Crédito</option></select></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">N° Factura Proveedor</label><input type="text" id="c-factura" class="form-input" placeholder="Opcional"></div>
+                <div class="form-group"><label class="form-label">Moneda de Compra</label><select id="c-moneda" class="form-select"><option value="PYG">🇵🇾 PYG</option><option value="USD">🇺🇸 USD</option></select></div>
+            </div>
+            <hr>
+            <h4 class="mb-1">📦 Productos</h4>
+            <div class="form-row"><div class="form-group"><label class="form-label">Producto existente o nuevo</label><select id="c-producto-existente" class="form-select" onchange="Compras.toggleNuevo()"><option value="">➕ Crear nuevo producto</option></select></div></div>
+            <div id="c-nuevo-fields">
+                <div class="form-row-3">
+                    <div class="form-group"><input type="text" id="c-codigo-nuevo" class="form-input" placeholder="Código (ej: PROD-001)"></div>
+                    <div class="form-group"><input type="text" id="c-nombre-nuevo" class="form-input" placeholder="Nombre del producto"></div>
+                    <div class="form-group"><select id="c-categoria" class="form-select"><option value="general">📦 General</option><option value="alimentos">🍔 Alimentos</option><option value="bebidas">🥤 Bebidas</option><option value="limpieza">🧴 Limpieza</option><option value="tecnologia">💻 Tecnología</option><option value="otros">🔧 Otros</option></select></div>
+                </div>
+            </div>
+            <div class="form-row-4">
+                <div class="form-group"><input type="number" id="c-cantidad" class="form-input" value="1" min="1" placeholder="Cantidad"></div>
+                <div class="form-group"><input type="number" id="c-costo" class="form-input" placeholder="Costo unitario"></div>
+                <div class="form-group"><input type="number" id="c-margen" class="form-input" value="30" min="0" placeholder="Margen %"></div>
+                <button onclick="Compras.agregarItem()" class="btn btn-success">+ Agregar</button>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>Código</th><th>Nombre</th><th>Cant</th><th>Costo</th><th>Precio Venta</th><th>Subtotal</th><th></th></tr></thead><tbody id="c-items"></tbody></table></div>
+            <div class="totals-box"><div class="total-line grand"><span>Total de Compra:</span><span id="c-total">₲ 0</span></div></div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="Compras.cerrar()" class="btn btn-secondary">Cancelar</button>
+            <button onclick="Compras.guardar()" class="btn btn-success btn-lg">💾 Guardar Compra</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PAGO PROVEEDOR -->
+<div class="modal" id="modal-pago">
+    <div class="modal-content" style="max-width:560px">
+        <div class="modal-header"><h3>💳 Registrar Pago a Proveedor</h3><button onclick="PagosProveedores.cerrarModal()" class="btn btn-secondary btn-sm">✕</button></div>
+        <div class="modal-body">
+            <div class="form-group"><label class="form-label">Proveedor *</label><select id="pp-prov" class="form-select" onchange="PagosProveedores.onProvChange()"><option value="">Seleccionar...</option></select></div>
+            <div class="form-group"><label class="form-label">Compra a pagar (opcional)</label><select id="pp-compra-ref" class="form-select"><option value="">Pago general / sin referencia</option></select></div>
+            <div id="pp-deuda-info" style="display:none" class="totals-box mb-2">
+                <div class="total-line"><span>Total compra:</span><strong id="pp-deuda-total">₲ 0</strong></div>
+                <div class="total-line"><span>Ya pagado:</span><strong id="pp-deuda-pagado" class="text-success">₲ 0</strong></div>
+                <div class="total-line grand"><span>Saldo pendiente:</span><span id="pp-deuda-saldo">₲ 0</span></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Monto a pagar *</label><input type="number" id="pp-monto" class="form-input" min="1" placeholder="0" oninput="PagosProveedores.onMontoChange()"></div>
+                <div class="form-group"><label class="form-label">Moneda</label><select id="pp-moneda" class="form-select"><option value="PYG">₲ Guaraníes</option><option value="USD">$ Dólares</option><option value="EUR">€ Euros</option></select></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Método de Pago</label><select id="pp-metodo" class="form-select"><option value="efectivo">💵 Efectivo</option><option value="transferencia">🏦 Transferencia</option><option value="cheque">📝 Cheque</option><option value="tarjeta">💳 Tarjeta</option></select></div>
+                <div class="form-group"><label class="form-label">Fecha</label><input type="date" id="pp-fecha" class="form-input"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Concepto / Nota</label><input type="text" id="pp-concepto" class="form-input" placeholder="Ej: Pago factura 001, seña, etc."></div>
+            <div id="pp-alerta-caja" class="hidden" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius-sm);padding:0.75rem 1rem;font-size:0.85rem;color:var(--warning);margin-top:0.5rem">
+                ⚠️ Este pago se debitará de la caja en PYG.
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="PagosProveedores.cerrarModal()" class="btn btn-secondary">Cancelar</button>
+            <button onclick="PagosProveedores.guardar()" class="btn btn-primary btn-lg">💾 Registrar Pago</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EMPLEADO -->
+<div class="modal" id="modal-empleado">
+    <div class="modal-content" style="max-width:580px">
+        <div class="modal-header"><h3 id="modal-empleado-title">👷 Nuevo Empleado</h3><button onclick="Nomina.cerrarModalEmpleado()" class="btn btn-secondary btn-sm">✕</button></div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Nombre completo *</label><input type="text" id="emp-nombre" class="form-input" placeholder="Juan Pérez"></div>
+                <div class="form-group"><label class="form-label">CI / Documento</label><input type="text" id="emp-ci" class="form-input" placeholder="1234567"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Cargo / Puesto</label><input type="text" id="emp-cargo" class="form-input" placeholder="Vendedor, Repositor, etc."></div>
+                <div class="form-group"><label class="form-label">Teléfono</label><input type="text" id="emp-tel" class="form-input" placeholder="0981 234 567"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Tipo de contrato</label>
+                    <select id="emp-tipo" class="form-select">
+                        <option value="mensual">📅 Mensual fijo</option>
+                        <option value="quincenal">📅 Quincenal</option>
+                        <option value="semanal">📅 Semanal</option>
+                        <option value="jornal">📆 Jornal (por día)</option>
+                        <option value="comision">💸 Solo comisión</option>
+                        <option value="mixto">🔀 Fijo + comisión</option>
+                    </select>
+                </div>
+                <div class="form-group"><label class="form-label">Salario base (PYG)</label><input type="number" id="emp-salario" class="form-input" value="0" min="0" placeholder="0"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Comisión sobre ventas (%)</label><input type="number" id="emp-comision" class="form-input" value="0" min="0" max="100" step="0.5"></div>
+                <div class="form-group"><label class="form-label">Fecha de ingreso</label><input type="date" id="emp-ingreso" class="form-input"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Notas</label><input type="text" id="emp-notas" class="form-input" placeholder="Observaciones, beneficios, etc."></div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="Nomina.cerrarModalEmpleado()" class="btn btn-secondary">Cancelar</button>
+            <button onclick="Nomina.guardarEmpleado()" class="btn btn-primary btn-lg">💾 Guardar Empleado</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PAGO EMPLEADO -->
+<div class="modal" id="modal-pago-empleado">
+    <div class="modal-content" style="max-width:520px">
+        <div class="modal-header"><h3>💸 Registrar Pago a Empleado</h3><button onclick="Nomina.cerrarModalPago()" class="btn btn-secondary btn-sm">✕</button></div>
+        <div class="modal-body">
+            <div class="form-group"><label class="form-label">Empleado *</label><select id="pago-emp-id" class="form-select" onchange="Nomina.onEmpChange()"><option value="">Seleccionar...</option></select></div>
+            <div id="pago-emp-info" style="display:none" class="totals-box mb-2">
+                <div class="total-line"><span>Salario base:</span><strong id="pago-emp-salario">₲ 0</strong></div>
+                <div class="total-line"><span>Pagado este mes:</span><strong id="pago-emp-pagado" class="text-success">₲ 0</strong></div>
+                <div class="total-line grand"><span>Pendiente:</span><span id="pago-emp-pendiente">₲ 0</span></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Monto *</label><input type="number" id="pago-emp-monto" class="form-input" min="1" placeholder="0"></div>
+                <div class="form-group"><label class="form-label">Método</label><select id="pago-emp-metodo" class="form-select"><option value="efectivo">💵 Efectivo</option><option value="transferencia">🏦 Transferencia</option><option value="tigo_money">📱 Tigo Money</option><option value="personal_pay">📱 Personal Pay</option></select></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Concepto</label><select id="pago-emp-concepto" class="form-select"><option value="salario">Salario</option><option value="anticipo">Anticipo</option><option value="aguinaldo">Aguinaldo</option><option value="comision">Comisión</option><option value="bonificacion">Bonificación</option><option value="horas_extra">Horas extra</option><option value="otro">Otro</option></select></div>
+                <div class="form-group"><label class="form-label">Período</label><input type="month" id="pago-emp-periodo" class="form-input"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Notas</label><input type="text" id="pago-emp-notas" class="form-input" placeholder="Opcional"></div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="Nomina.cerrarModalPago()" class="btn btn-secondary">Cancelar</button>
+            <button onclick="Nomina.guardarPago()" class="btn btn-success btn-lg">💾 Registrar Pago</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL AGREGAR PRODUCTO MANUAL -->
+<div class="modal" id="modal-producto-manual">
+    <div class="modal-content" style="max-width:680px">
+        <div class="modal-header"><h3>➕ Agregar Producto al Inventario</h3><button onclick="Inventario.cerrarModalAgregar()" class="btn btn-secondary btn-sm">✕</button></div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Código *</label>
+                    <input type="text" id="prod-codigo" class="form-input" placeholder="PROD-001" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Código de Barras (opcional)</label>
+                    <input type="text" id="prod-codigo-barras" class="form-input" placeholder="123456789012">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nombre del Producto *</label>
+                <input type="text" id="prod-nombre" class="form-input" placeholder="Nombre completo del producto" required>
+            </div>
+            <div class="form-row-3">
+                <div class="form-group">
+                    <label class="form-label">Categoría</label>
+                    <select id="prod-categoria" class="form-select">
+                        <option value="general">📦 General</option>
+                        <option value="alimentos">🍔 Alimentos</option>
+                        <option value="bebidas">🥤 Bebidas</option>
+                        <option value="limpieza">🧴 Limpieza</option>
+                        <option value="tecnologia">💻 Tecnología</option>
+                        <option value="moda">👕 Moda</option>
+                        <option value="hogar">🏠 Hogar</option>
+                        <option value="digital">💻 Digital/Servicio</option>
+                        <option value="otros">🔧 Otros</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Stock Inicial *</label>
+                    <input type="number" id="prod-stock" class="form-input" value="0" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Stock Mínimo (alerta)</label>
+                    <input type="number" id="prod-stock-min" class="form-input" value="10" min="0">
+                </div>
+            </div>
+            <div class="form-row-3">
+                <div class="form-group">
+                    <label class="form-label">Costo Unitario (PYG) *</label>
+                    <input type="number" id="prod-costo" class="form-input" value="0" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Margen de Ganancia (%)</label>
+                    <input type="number" id="prod-margen" class="form-input" value="30" min="0" max="100" oninput="Inventario.calcularPrecio()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Precio de Venta (PYG) *</label>
+                    <input type="number" id="prod-precio" class="form-input" value="0" min="0" required oninput="Inventario.calcularMargen()">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Ubicación en Almacén</label>
+                    <input type="text" id="prod-ubicacion" class="form-input" placeholder="Ej: Pasillo A, Estante 3">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Proveedor Habitual</label>
+                    <select id="prod-proveedor" class="form-select">
+                        <option value="">Sin proveedor asignado</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Fecha de Vencimiento / Caducidad</label>
+                    <input type="date" id="prod-vencimiento" class="form-input">
+                    <small class="text-muted">Dejá vacío si el producto no caduca</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Alerta vencimiento (días antes)</label>
+                    <input type="number" id="prod-alerta-dias" class="form-input" value="30" min="1" max="365">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Descripción / Notas</label>
+                <textarea id="prod-descripcion" class="form-input" rows="2" placeholder="Características, observaciones, etc."></textarea>
+            </div>
+            <div class="totals-box" style="background:rgba(16,185,129,0.05);border-color:rgba(16,185,129,0.2);">
+                <div class="total-line">
+                    <span>Ganancia por unidad:</span>
+                    <strong id="prod-ganancia" class="text-success">₲ 0</strong>
+                </div>
+                <div class="total-line">
+                    <span>Valor del stock:</span>
+                    <strong id="prod-valor-stock">₲ 0</strong>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="Inventario.cerrarModalAgregar()" class="btn btn-secondary">Cancelar</button>
+            <button onclick="Inventario.guardarProductoManual()" class="btn btn-primary btn-lg">💾 Guardar Producto</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CATEGORÍAS DE INVENTARIO -->
+<div class="modal" id="modal-categorias">
+    <div class="modal-content" style="max-width:560px">
+        <div class="modal-header"><h3>🏷️ Categorías de Inventario</h3><button onclick="document.getElementById('modal-categorias').classList.remove('active')" class="btn btn-secondary btn-sm">✕</button></div>
+        <div class="modal-body">
+            <div class="form-row-4" style="margin-bottom:1rem">
+                <input type="text" id="cat-nombre" class="form-input" placeholder="Nombre de categoría...">
+                <input type="text" id="cat-emoji" class="form-input" placeholder="Emoji (ej: 🍔)" style="max-width:80px">
+                <input type="color" id="cat-color" class="form-input" value="#6366f1" style="max-width:60px;padding:0.4rem">
+                <button class="btn btn-primary" onclick="Inventario.agregarCategoria()">➕ Agregar</button>
+            </div>
+            <div id="categorias-lista" class="category-chips"></div>
+            <hr>
+            <h4 class="mb-2" style="font-size:0.9rem">📋 Categorías actuales y productos</h4>
+            <div id="categorias-stats" class="table-wrap">
+                <table><thead><tr><th>Categoría</th><th>Productos</th><th>Stock Total</th><th>Valor Stock</th><th></th></tr></thead>
+                <tbody id="categorias-tabla"></tbody></table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="document.getElementById('modal-categorias').classList.remove('active')" class="btn btn-secondary">Cerrar</button>
+            <button onclick="Inventario.guardarCategorias()" class="btn btn-primary">💾 Guardar Categorías</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE TEMAS -->
+<div class="theme-modal-overlay" id="theme-modal-overlay" onclick="if(event.target===this)Themes.closeModal()">
+    <div class="theme-modal">
+        <div class="theme-modal-hdr">
+            <h3>🎨 Personalizar Apariencia</h3>
+            <button onclick="Themes.closeModal()" class="btn btn-secondary btn-sm" style="color:white;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3)">✕ Cerrar</button>
+        </div>
+        <div class="theme-modal-body">
+            <div class="theme-section-title">🌈 Elegí tu tema</div>
+            <div class="theme-grid" id="theme-grid"></div>
+            <div class="theme-section-title">⚙️ Ajustes</div>
+            <div class="theme-controls-grid">
+                <div class="theme-ctrl">
+                    <label>Tamaño de texto <span id="font-size-val">14px</span></label>
+                    <input type="range" id="font-size-slider" min="12" max="18" value="14" oninput="Themes.setFontSize(this.value)">
+                </div>
+                <div class="theme-ctrl">
+                    <label>Ancho sidebar <span id="sidebar-w-val">270px</span></label>
+                    <input type="range" id="sidebar-w-slider" min="200" max="320" value="270" step="10" oninput="Themes.setSidebarWidth(this.value)">
+                </div>
+            </div>
+            <div class="theme-toggles">
+                <button class="btn btn-secondary btn-sm" onclick="Themes.toggleCompact()" id="btn-compact">📦 Modo Compacto</button>
+                <button class="btn btn-secondary btn-sm" onclick="Themes.toggleRounded()" id="btn-rounded">⬛ Esquinas Cuadradas</button>
+                <button class="btn btn-secondary btn-sm" onclick="Themes.toggleAnimations()" id="btn-anim">⚡ Animaciones OFF</button>
+                <button class="btn btn-danger btn-sm" onclick="Themes.reset()">↩️ Restablecer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Onboarding removido -->
+
+<!-- Licencia removida -->
+
+<!-- ══ MODAL DETALLE / REMITO DE VENTA ══ -->
+<div class="modal" id="modal-remito">
+  <div class="modal-content" style="max-width:680px">
+    <div class="modal-header">
+      <h3>🧾 Detalle de Venta</h3>
+      <div style="display:flex;gap:0.5rem">
+        <button onclick="Remito.imprimir()" class="btn btn-primary btn-sm">🖨️ Imprimir</button>
+        <button onclick="document.getElementById('modal-remito').classList.remove('active')" class="btn btn-secondary btn-sm">✕</button>
+      </div>
+    </div>
+    <div class="modal-body" id="remito-body" style="padding:1.5rem"></div>
+  </div>
+</div><!-- ══ MODAL GENÉRICO (UI SYSTEM) ══ -->
+<div id="ui-modal-overlay" class="modal-overlay" style="position:fixed;inset:0;z-index:10000;background:rgba(15,23,42,0.8);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:1rem">
+  <div id="ui-modal-content" style="background:var(--bg-card);border:1px solid var(--border);border-radius:24px;width:100%;max-width:420px;box-shadow:var(--shadow-lg);border:1px solid var(--border);overflow:hidden">
+    <!-- Aquí se inyecta el contenido dinámicamente -->
+  </div>
+</div>
+
+
+<!-- Login removido -->
+
+<!-- ══ Dependencias externas ══ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+
+<!-- ══ Módulos de la aplicación ══ -->
+<script src="jsdatabase.js"></script>
+<script src="jsauth.js"></script>
+<script src="jsdummy.js"></script>
+<script src="jscore.js"></script>
+<script src="jsui.js"></script>
+<script src="jsinventario.js"></script>
+<script src="jsventas.js"></script>
+<script src="jsnomina.js"></script>
+<script src="jsnotificaciones.js"></script>
+
+<!-- ══ Arranque ══ -->
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    DB.init();
+    await Auth.init();
+    // Notificaciones se inician desde App.init() → App.show(dashboard)
+});
+</script>
+</body>
+</html>
