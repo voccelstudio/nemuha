@@ -3,11 +3,14 @@
 // IndexedDB + localStorage + Supabase sync
 // ════════════════════════════════════════
 
-const SUPA_URL = 'https://tbtnggplcygzmwrstirj.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRidG5nZ3BsY3lnem13cnN0aXJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNTg2MzEsImV4cCI6MjA4OTgzNDYzMX0.STadIs9jHkYAMhaoG7BnBEVEDUfjhA4QYgLgibr3rzg';
+// ── Supabase config (opcional — dejar vacío para modo solo-local) ──
+// Para activar sync en la nube: poner tu URL y KEY de Supabase aquí.
+const SUPA_URL = '';
+const SUPA_KEY = '';
 let _supaClient = null;
 
 function getSupa() {
+    if (!SUPA_URL || !SUPA_KEY) return null; // Sin config → modo local puro
     if (!_supaClient && window.supabase) {
         _supaClient = window.supabase.createClient(SUPA_URL, SUPA_KEY);
     }
@@ -141,17 +144,20 @@ const DB = {
         if (this._saveTimer) clearTimeout(this._saveTimer);
         this._saveTimer = setTimeout(async () => {
             await IDB.set('erp_data', payload);
-        }, 300);
+            console.log('[DB] Guardado local (IDB) ✓');
+        }, 500); // 500ms debounce
         // 3. Supabase (debounced, background)
         if (this._syncTimer) clearTimeout(this._syncTimer);
-        this._syncTimer = setTimeout(() => { SupaSync.push(); }, 3000);
+        this._syncTimer = setTimeout(() => { SupaSync.push(); }, 5000); // 5s debounce para ahorrar tráfico
     },
 
     id(tipo) {
         const fecha = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-        const pfx = { ventas: 'FAC', compras: 'COM', productos: 'PROD', clientes: 'CLI', proveedores: 'PROV', vendedores: 'VEND', caja: 'CJA' }[tipo] || tipo.slice(0, 3).toUpperCase();
+        const pfx = { ventas: 'FAC', compras: 'COM', productos: 'PROD', clientes: 'CLI', proveedores: 'PROV', vendedores: 'VEND', caja: 'CJA', empleados: 'EMP' }[tipo] || tipo.slice(0, 3).toUpperCase();
         const arr = this.data[tipo] || [];
-        return `${pfx}-${fecha}-${String(arr.length + 1).padStart(4, '0')}`;
+        const seq = String(arr.length + 1).padStart(4, '0');
+        const rand = Math.random().toString(36).substring(2, 5).toUpperCase();
+        return `${pfx}-${fecha}-${seq}-${rand}`;
     },
 
     _caja() {
