@@ -1,9 +1,74 @@
 // ════════════════════════════════════════
 // ÑEMUHA — jsui.js
-// UI helpers: Backup, Entidades, Vendedores,
-// PagosProveedores, Pedidos, Reportes,
-// Temas, DeviceAPI
+// UI helpers: UI (Modals), Backup, Entidades, 
+// Vendedores, PagosProveedores, Pedidos, 
+// Reportes, Temas, DeviceAPI
 // ════════════════════════════════════════
+
+const UI = {
+    // Sistema de modales genéricos para reemplazo de confirm/prompt
+    confirm(title, text, type = 'info') {
+        return new Promise((res) => {
+            const overlay = document.getElementById('ui-modal-overlay');
+            const content = document.getElementById('ui-modal-content');
+            if (!overlay || !content) {
+                if (confirm(text)) res(true); else res(false);
+                return;
+            }
+            const colors = { info: 'var(--primary)', danger: 'var(--danger)', success: 'var(--success)', warning: 'var(--warning)' };
+            const icons = { info: 'ℹ️', danger: '⚠️', success: '✅', warning: '🔶' };
+            content.innerHTML = `
+                <div style="text-align:center;padding:2rem">
+                    <div style="font-size:3.5rem;margin-bottom:1rem">${icons[type]}</div>
+                    <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:0.75rem;color:var(--text-primary)">${title}</h2>
+                    <p style="color:var(--text-secondary);margin-bottom:2rem;font-size:0.95rem;line-height:1.6">${text}</p>
+                    <div style="display:flex;gap:1rem;justify-content:center">
+                        <button id="ui-btn-cancel" class="btn btn-secondary" style="flex:1;padding:0.8rem">Cancelar</button>
+                        <button id="ui-btn-ok" class="btn btn-primary" style="flex:1;padding:0.8rem;background:${colors[type]}">Confirmar</button>
+                    </div>
+                </div>
+            `;
+            overlay.style.display = 'flex';
+            const clean = () => { overlay.style.display = 'none'; };
+            document.getElementById('ui-btn-ok').onclick = () => { clean(); res(true); };
+            document.getElementById('ui-btn-cancel').onclick = () => { clean(); res(false); };
+        });
+    },
+
+    prompt(title, text, defaultValue = '', placeholder = '') {
+        return new Promise((res) => {
+            const overlay = document.getElementById('ui-modal-overlay');
+            const content = document.getElementById('ui-modal-content');
+            if (!overlay || !content) {
+                res(prompt(text, defaultValue));
+                return;
+            }
+            content.innerHTML = `
+                <div style="padding:2rem">
+                    <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:0.75rem;color:var(--text-primary)">${title}</h2>
+                    <p style="color:var(--text-secondary);margin-bottom:1.25rem;font-size:0.9rem">${text}</p>
+                    <input type="text" id="ui-prompt-input" class="form-input" value="${defaultValue}" placeholder="${placeholder}" 
+                        style="width:100%;margin-bottom:1.5rem;border:2px solid var(--border);padding:0.8rem;border-radius:12px">
+                    <div style="display:flex;gap:1rem">
+                        <button id="ui-btn-cancel" class="btn btn-secondary" style="flex:1;padding:0.8rem">Cancelar</button>
+                        <button id="ui-btn-ok" class="btn btn-primary" style="flex:1;padding:0.8rem">Aceptar</button>
+                    </div>
+                </div>
+            `;
+            overlay.style.display = 'flex';
+            const input = document.getElementById('ui-prompt-input');
+            input.focus(); input.select();
+            const clean = () => { overlay.style.display = 'none'; };
+            document.getElementById('ui-btn-ok').onclick = () => { clean(); res(input.value); };
+            document.getElementById('ui-btn-cancel').onclick = () => { clean(); res(null); };
+            input.onkeydown = (e) => { 
+                if (e.key === 'Enter') { clean(); res(input.value); } 
+                if (e.key === 'Escape') { clean(); res(null); } 
+            };
+        });
+    }
+};
+
 
 // ── Backup Excel + JSON ──
 const Backup = {

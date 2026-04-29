@@ -301,7 +301,7 @@
 <base target="_blank">
 </head>
 <body>
-<div class="app" style="display:none">
+<div class="app">
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
         <div class="logo">
@@ -335,10 +335,10 @@
             <div class="nav-item" data-sec="config" onclick="App.show('config')"><span class="nav-icon">⚙️</span>Configuración</div>
         </div>
         <div class="nav-section" style="margin-top:auto;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.07)">
-            <div style="padding:0 0.5rem 0.5rem;font-size:0.75rem;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="nav-user-email"></div>
-            <div class="nav-item" onclick="Auth.logout()" style="color:var(--danger)"><span class="nav-icon">🚪</span>Cerrar Sesión</div>
+            <div class="nav-item" onclick="location.reload()"><span class="nav-icon">🔄</span>Reiniciar App</div>
         </div>
     </aside>
+
     <div class="overlay" id="overlay" onclick="App.closeSidebar()"></div>
 
     <main class="main">
@@ -939,6 +939,7 @@
                 <hr>
                 <h3 class="mb-2">⚠️ Zona de Peligro</h3>
                 <div class="flex gap-1 flex-wrap">
+                    <button class="btn btn-warning" onclick="DummyData.populate()">🚀 Cargar Datos Demo</button>
                     <button class="btn btn-danger" onclick="if(confirm('¿SEGURO? Se borrarán TODOS los datos permanentemente.')){localStorage.removeItem('erp_data');localStorage.removeItem('erp_data_ts');IDB.del('erp_data').then(()=>location.reload());}">🗑️ Limpiar Datos</button>
                     <button class="btn btn-success" onclick="Backup.exportarExcel()">📊 Exportar Excel</button>
                     <button class="btn btn-secondary" onclick="Backup.exportarJSON()">💾 Backup JSON</button>
@@ -1368,86 +1369,9 @@
     </div>
 </div>
 
-<!-- ══ MODAL ONBOARDING WIZARD ══ -->
-<div id="onboarding-overlay" style="position:fixed;inset:0;z-index:8000;background:rgba(15,23,42,0.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:1rem">
-  <div style="background:var(--bg-card);border-radius:24px;width:100%;max-width:520px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,0.4);border:1px solid var(--border)">
-    <!-- Progress bar -->
-    <div style="height:4px;background:var(--border)"><div id="ob-progress" style="height:100%;background:var(--primary-gradient);transition:width 0.4s ease;width:33%"></div></div>
-    <!-- Steps -->
-    <div id="ob-step-1" class="ob-step" style="padding:2rem">
-      <div style="text-align:center;margin-bottom:1.5rem">
-        <span style="font-size:3rem">🏢</span>
-        <h2 style="font-size:1.4rem;font-weight:800;margin-top:0.5rem">Bienvenido a Ñemuha</h2>
-        <p style="color:var(--text-muted);font-size:0.875rem;margin-top:0.4rem">Configurá tu empresa en 3 pasos rápidos</p>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:0.875rem">
-        <div><label style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:0.35rem">Nombre de la empresa *</label><input id="ob-nombre" class="form-input" placeholder="Ej: Comercial San Juan SRL" style="width:100%"></div>
-        <div><label style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:0.35rem">RUC *</label><input id="ob-ruc" class="form-input" placeholder="Ej: 80012345-6" style="width:100%"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
-          <div><label style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:0.35rem">Teléfono</label><input id="ob-tel" class="form-input" placeholder="021 123 456"></div>
-          <div><label style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:0.35rem">Ciudad</label><input id="ob-ciudad" class="form-input" placeholder="Asunción"></div>
-        </div>
-        <div><label style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:0.35rem">Dirección</label><input id="ob-dir" class="form-input" placeholder="Av. Principal 123" style="width:100%"></div>
-      </div>
-      <button onclick="Onboarding.step1Next()" class="btn btn-primary btn-lg" style="width:100%;margin-top:1.5rem">Siguiente →</button>
-    </div>
-    <div id="ob-step-2" class="ob-step" style="padding:2rem;display:none">
-      <div style="text-align:center;margin-bottom:1.5rem">
-        <span style="font-size:3rem">🔑</span>
-        <h2 style="font-size:1.4rem;font-weight:800;margin-top:0.5rem">Crear usuario administrador</h2>
-        <p style="color:var(--text-muted);font-size:0.875rem;margin-top:0.4rem">Vas a usar estas credenciales para ingresar</p>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:0.875rem">
-        <div><label style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:0.35rem">Tu nombre completo *</label><input id="ob-admin-nombre" class="form-input" placeholder="Juan Pérez" style="width:100%"></div>
-        <div><label style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:0.35rem">Usuario *</label><input id="ob-admin-user" class="form-input" placeholder="admin" style="width:100%"></div>
-        <div><label style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:0.35rem">Contraseña * (mín. 6 caracteres)</label><input type="password" id="ob-admin-pass" class="form-input" style="width:100%"></div>
-        <div><label style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:0.35rem">Repetir contraseña *</label><input type="password" id="ob-admin-pass2" class="form-input" style="width:100%"></div>
-      </div>
-      <div style="display:flex;gap:0.75rem;margin-top:1.5rem">
-        <button onclick="Onboarding.back(1)" class="btn btn-secondary" style="flex:1">← Atrás</button>
-        <button onclick="Onboarding.step2Next()" class="btn btn-primary btn-lg" style="flex:2">Siguiente →</button>
-      </div>
-    </div>
-    <div id="ob-step-3" class="ob-step" style="padding:2rem;display:none">
-      <div style="text-align:center;margin-bottom:1.5rem">
-        <span style="font-size:3rem">⚙️</span>
-        <h2 style="font-size:1.4rem;font-weight:800;margin-top:0.5rem">Preferencias iniciales</h2>
-        <p style="color:var(--text-muted);font-size:0.875rem;margin-top:0.4rem">Podés cambiar esto después en Configuración</p>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:0.875rem">
-        <div><label style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:0.35rem">Moneda principal</label>
-          <select id="ob-moneda" class="form-select" style="width:100%"><option value="PYG">₲ Guaraníes (PYG)</option><option value="USD">$ Dólares (USD)</option><option value="EUR">€ Euros (EUR)</option></select></div>
-        <div><label style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:0.35rem">IVA por defecto (%)</label>
-          <select id="ob-iva" class="form-select" style="width:100%"><option value="10">10% (Paraguay estándar)</option><option value="5">5% (reducido)</option><option value="0">0% (exento)</option></select></div>
-        <div><label style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:0.35rem">Tema visual</label>
-          <select id="ob-tema" class="form-select" style="width:100%">
-            <option value="light">☀️ Índigo Clásico</option><option value="dark">🌙 Oscuro Noche</option>
-            <option value="nature">🌿 Verde Natura</option><option value="ocean">🌊 Azul Oceánico</option>
-            <option value="vaporwave">🌸 Vaporwave</option>
-          </select></div>
-        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:0.875rem;font-size:0.82rem;color:var(--text-secondary)">
-          💡 <strong>Tip:</strong> Guardá backups periódicos desde <em>Inventario → Guardar BD</em>. Tus datos viven en este navegador.
-        </div>
-      </div>
-      <div style="display:flex;gap:0.75rem;margin-top:1.5rem">
-        <button onclick="Onboarding.back(2)" class="btn btn-secondary" style="flex:1">← Atrás</button>
-        <button onclick="Onboarding.finish()" class="btn btn-primary btn-lg" style="flex:2">🚀 ¡Empezar!</button>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- Onboarding removido -->
 
-<!-- ══ MODAL LICENCIA / VENCIMIENTO ══ -->
-<div id="license-overlay" style="position:fixed;inset:0;z-index:9500;background:rgba(15,23,42,0.92);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:1rem">
-  <div style="background:var(--bg-card);border-radius:24px;width:100%;max-width:460px;padding:2.5rem 2rem;text-align:center;box-shadow:0 30px 60px rgba(0,0,0,0.5);border:1px solid rgba(239,68,68,0.3)">
-    <div style="font-size:4rem;margin-bottom:1rem" id="lic-icon">⛔</div>
-    <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:0.5rem;color:var(--danger)" id="lic-title">Suscripción vencida</h2>
-    <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1.5rem;line-height:1.6" id="lic-msg">Tu período de acceso venció. Para seguir usando Ñemuha, renovar tu suscripción.</p>
-    <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:1rem;margin-bottom:1.5rem" id="lic-info"></div>
-    <a id="lic-btn" href="#" target="_blank" class="btn btn-danger btn-lg" style="width:100%;display:flex;justify-content:center;text-decoration:none">💳 Renovar suscripción</a>
-    <p style="font-size:0.72rem;color:var(--text-muted);margin-top:0.875rem" id="lic-contact"></p>
-  </div>
-</div>
+<!-- Licencia removida -->
 
 <!-- ══ MODAL DETALLE / REMITO DE VENTA ══ -->
 <div class="modal" id="modal-remito">
@@ -1461,43 +1385,23 @@
     </div>
     <div class="modal-body" id="remito-body" style="padding:1.5rem"></div>
   </div>
-</div>
-
-
-
-<!-- ══ LOGIN SCREEN (Ñemuha) ══ -->
-<div id="erpLogin" style="position:fixed;inset:0;z-index:9999;background:var(--bg-body);display:none;align-items:center;justify-content:center;padding:1rem">
-  <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem 2rem;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.4)">
-    <div style="text-align:center;margin-bottom:1.75rem">
-      <span style="font-size:3rem;display:block;margin-bottom:.5rem">&#x1F3E2;</span>
-      <h1 id="erpEmpName" style="font-size:1.6rem;font-weight:900;margin:0;background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Ñemuha</h1>
-      <p style="font-size:.82rem;color:var(--text-muted);margin:.25rem 0 0">Sistema de Gestión Empresarial</p>
-    </div>
-    <div id="erpErr" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:var(--radius-sm);padding:.6rem 1rem;font-size:.83rem;color:var(--danger);margin-bottom:1rem;display:none"></div>
-    <div style="margin-bottom:1rem">
-      <label style="display:block;font-size:.78rem;font-weight:700;color:var(--text-secondary);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.05em">Usuario</label>
-      <input type="text" id="erpUser" placeholder="admin" autocomplete="username"
-        style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-body);color:var(--text-primary);font-size:.95rem;outline:none;box-sizing:border-box">
-    </div>
-    <div style="margin-bottom:1rem">
-      <label style="display:block;font-size:.78rem;font-weight:700;color:var(--text-secondary);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.05em">Contraseña</label>
-      <input type="password" id="erpPass" placeholder="••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')Auth.login()"
-        style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-body);color:var(--text-primary);font-size:.95rem;outline:none;box-sizing:border-box">
-    </div>
-    <button id="erpLoginBtn" onclick="Auth.login()" style="width:100%;padding:.85rem;background:var(--primary-gradient);border:none;border-radius:var(--radius-sm);color:white;font-size:1rem;font-weight:800;cursor:pointer;margin-top:.5rem">
-      🔓 Ingresar
-    </button>
-
+</div><!-- ══ MODAL GENÉRICO (UI SYSTEM) ══ -->
+<div id="ui-modal-overlay" class="modal-overlay" style="position:fixed;inset:0;z-index:10000;background:rgba(15,23,42,0.8);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:1rem">
+  <div id="ui-modal-content" style="background:var(--bg-card);border:1px solid var(--border);border-radius:24px;width:100%;max-width:420px;box-shadow:var(--shadow-lg);border:1px solid var(--border);overflow:hidden">
+    <!-- Aquí se inyecta el contenido dinámicamente -->
   </div>
 </div>
 
+
+<!-- Login removido -->
+
 <!-- ══ Dependencias externas ══ -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
 
 <!-- ══ Módulos de la aplicación ══ -->
 <script src="jsdatabase.js"></script>
 <script src="jsauth.js"></script>
+<script src="jsdummy.js"></script>
 <script src="jscore.js"></script>
 <script src="jsui.js"></script>
 <script src="jsinventario.js"></script>
@@ -1507,11 +1411,10 @@
 
 <!-- ══ Arranque ══ -->
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
-    DB.init();
-    await Auth.init();
-    // Notificaciones se inician desde App.init() → App.show(dashboard)
+document.addEventListener('DOMContentLoaded', () => {
+    App.init();
 });
+
 </script>
 </body>
 </html>

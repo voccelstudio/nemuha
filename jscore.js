@@ -98,12 +98,7 @@ const App = {
         this.aplicarTema();
         this.renderNav();
 
-        if (!DB.data.config.empresa.nombre || !DB.data.config.empresa.ruc) {
-            alert('⚠️ Bienvenido a Ñemuha\n\nPor favor, configurá los datos de tu empresa antes de comenzar (Nombre, RUC, Dirección).');
-            this.show('config');
-        } else {
-            this.show('dashboard');
-        }
+        this.show('dashboard');
 
         this.renderConfigForm();
         const el = document.getElementById('fecha-actual');
